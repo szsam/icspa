@@ -102,6 +102,25 @@ static int cmd_si(char *args) {
 
 
 static int cmd_info(char *args) {
+	/* extract the first argument */
+	char *arg = strtok(NULL, " ");
+
+	if (!strcmp(arg, "r")) {
+		/* list registers and their contents */
+		printf("eax\t\t%x\t\t%d\n", cpu.eax, cpu.eax);
+		printf("ecx\t\t%x\t\t%d\n", cpu.ecx, cpu.ecx);
+		printf("edx\t\t%x\t\t%d\n", cpu.edx, cpu.edx);
+		printf("ebx\t\t%x\t\t%d\n", cpu.ebx, cpu.ebx);
+		printf("esp\t\t%x\t\t%d\n", cpu.esp, cpu.esp);
+		printf("ebp\t\t%x\t\t%d\n", cpu.ebp, cpu.ebp);
+		printf("esi\t\t%x\t\t%d\n", cpu.esi, cpu.esi);
+		printf("edi\t\t%x\t\t%d\n", cpu.edi, cpu.edi);
+		printf("eip\t\t%x\t\t%d\n", cpu.eip, cpu.eip);
+	}
+	else if (!strcmp(arg, "w")) {
+	   //watchpoint
+	}
+
 	return 0;
 }
 
