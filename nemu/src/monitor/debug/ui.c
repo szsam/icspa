@@ -125,6 +125,27 @@ static int cmd_info(char *args) {
 }
 
 static int cmd_x(char *args) {
+	/* extract the first two arguments */
+	char *arg1 = strtok(NULL, " ");
+	char *arg2 = strtok(NULL, " ");
+	int num = atoi(arg1);
+	swaddr_t addr;
+   	sscanf(arg2, "%x", &addr);
+
+	for (int i = 0; i < num; i++) {
+		uint32_t data = swaddr_read(addr, 4);
+
+		if (i % 4 == 0)
+		{
+			printf("0x%x:\t", addr);
+		}
+		printf("0x%x\t", data);
+		if ((i+1)%4==0)
+			printf("\n");
+
+		addr += 4;
+
+	}
 	return 0;
 }
 
