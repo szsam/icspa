@@ -140,12 +140,13 @@ static int cmd_x(char *args) {
 			printf("0x%x:\t", addr);
 		}
 		printf("0x%x\t", data);
-		if ((i+1)%4==0)
+		if ((i + 1) % 4 == 0)
 			printf("\n");
 
 		addr += 4;
 
 	}
+	printf("\n");
 	return 0;
 }
 
