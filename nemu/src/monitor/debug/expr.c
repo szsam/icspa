@@ -30,7 +30,7 @@ static struct rule {
 	{"\\(",'('},					// left-parenthese
 	{"\\)",')'},					// right-parenthese
 	{"==", EQ},						// equal
-	{"[0-9]",DEC}					// decmical number
+	{"[0-9][0-9]*",DEC}				// decmical number
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
