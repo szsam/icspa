@@ -141,7 +141,7 @@ bool check_parentheses(int p, int q) {
 			--count;
 			if (count < 0)
 				panic("Parentheses do not match");
-			else if (count == 0)
+			else if (count == 0 && ix!=p && ix!=q)
 				once_empty = true;
 		}
 
