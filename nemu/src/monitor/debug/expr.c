@@ -267,7 +267,7 @@ uint32_t eval(int p, int q) {
 		return eval(p + 1, q - 1); 
 	}
 	else if (state == -1) {
-		fprintf(stderr, "Parentheses do not match");
+		fprintf(stderr, "Parentheses do not match\n");
 		return 0;
 	}
 	else {
