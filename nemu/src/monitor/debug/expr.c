@@ -155,9 +155,83 @@ bool check_parentheses(int p, int q) {
 	return ret;
 }
 
+bool is_operator(int type) {
+	switch (type) {
+		case '+': case '-': case '*': case '/':
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool inside_pare(int ix, int begin, int end) {
+	/* parentheses are mathched, so we only need to check
+	 * whether there is '(' on the left of the token indexed by ix
+	 * [or ')' on the right] */
+	while (begin < ix) {
+		if (tokens[begin].type == '(')
+			return true;
+		++begin;
+	}
+	return false;
+}
+	
+
+
+int preced(int type) {   // the bigger the value, the lower the precedence
+	switch (type) {
+		case '*': case '/':
+			return 1;
+		case '+': case '-':
+			return 2;
+		default:
+			assert(0);
+	}
+}
+
+//compare precedences of two operators
+inline int preced_comp(int type1, int type2)		
+{
+	return preced(type1)-preced(type2);
+}
+
+enum {LEFT, RIGHT};
+
+//associativity of a operator
+int associat(int type)	
+{
+	switch (type) {
+		case '+': case '-': case '*': case '/':
+			return LEFT;
+		default:
+			assert(0);
+	}
+}
+
 //return the position of dominant operator in the token expression;
 int dominant_operator(int p, int q) {
-	panic("Waiting for implemention");
+	//panic("Waiting for implemention");
+	
+	/* find the first operator that is not inside parentheses*/	
+	int ix = p;
+	while (!is_operator(tokens[ix].type) || inside_pare(ix, p, q))
+		++ix;
+
+	int ix_domin_oper = ix;
+
+	for (++ix; ix <= q; ++ix) {
+		if (!is_operator(tokens[ix].type) || inside_pare(ix, p, q))
+			continue;
+
+		/* current operator has lower precedence or
+		* same precedence and left-associative */
+		int cur_type = tokens[ix].type;
+		int domin_type = tokens[ix_domin_oper].type;
+		if (preced_comp(cur_type, domin_type)>0 ||
+			(preced_comp(cur_type, domin_type)==0 && associat(cur_type)==LEFT) )
+			ix_domin_oper = ix;
+	}
+	return ix_domin_oper;
 }
 
 uint32_t eval(int p, int q) {
