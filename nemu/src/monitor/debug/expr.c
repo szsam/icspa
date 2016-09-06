@@ -111,6 +111,7 @@ static bool make_token(char *e) {
 						if (substr_len > 31)
 							panic("buffer overflow");
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
+						++nr_token;
 						break;
 
 					default: panic("please implement me");
