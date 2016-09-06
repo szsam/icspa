@@ -132,7 +132,7 @@ static bool make_token(char *e) {
 
 bool check_parentheses(int p, int q) {
 	int count = 0;
-	bool once_empty = false;
+	bool empty = false;
 
 	for (int ix = p; ix <= q; ix++) {
 		if (tokens[ix].type == '(')
@@ -141,8 +141,8 @@ bool check_parentheses(int p, int q) {
 			--count;
 			if (count < 0)
 				panic("Parentheses do not match");
-			else if (count == 0 && ix!=p && ix!=q)
-				once_empty = true;
+			else if (count == 0 && ix != q)
+				empty = true;  //This means the expr is not surrounded by a pair of parentheses
 		}
 
 	}
@@ -150,7 +150,7 @@ bool check_parentheses(int p, int q) {
 	if (count > 0)
 		panic("Parentheses do not match");
 
-	bool ret = tokens[p].type == '(' && tokens[q].type == ')' && !once_empty;	 
+	bool ret = tokens[p].type == '(' && tokens[q].type == ')' && !empty;	 
 	Log("ret = %d", ret);
 	return ret;
 }
