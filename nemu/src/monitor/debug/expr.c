@@ -130,7 +130,14 @@ static bool make_token(char *e) {
 	return true; 
 }
 
-bool check_parentheses(int p, int q) {
+/*
+ * return value:
+ *  0  parentheses match, and the expr is surrounded by a pair of parentheses
+ *  1  parentheses match, but the expr is NOT surrounded by a pair of parentheses
+ * -1  parentheses do NOT match, bad expr
+ */
+int check_parentheses(int p, int q) {
+	int ret;
 	int count = 0;
 	bool empty = false;
 
@@ -140,7 +147,7 @@ bool check_parentheses(int p, int q) {
 		else if (tokens[ix].type == ')') {
 			--count;
 			if (count < 0)
-				panic("Parentheses do not match");
+				return -1;
 			else if (count == 0 && ix != q)
 				empty = true;  //This means the expr is not surrounded by a pair of parentheses
 		}
@@ -148,10 +155,13 @@ bool check_parentheses(int p, int q) {
 	}
 
 	if (count > 0)
-		panic("Parentheses do not match");
+		return -1;
 
-	bool ret = tokens[p].type == '(' && tokens[q].type == ')' && !empty;	 
-	Log("ret = %d", ret);
+	if (tokens[p].type == '(' && tokens[q].type == ')' && !empty)
+		ret = 0;
+	else
+		ret = 1;
+	//Log("ret = %d", ret);
 	return ret;
 }
 
@@ -237,6 +247,8 @@ int dominant_operator(int p, int q) {
 }
 
 uint32_t eval(int p, int q) {
+	int state;
+
 	if(p > q) {
 		/* Bad expression */
 		assert(0);
@@ -248,11 +260,15 @@ uint32_t eval(int p, int q) {
 		 */ 
 		return atoi(tokens[p].str);
 	}
-	else if(check_parentheses(p, q) == true) {
+	else if((state = check_parentheses(p, q)) == 0) {
 		/* The expression is surrounded by a matched pair of parentheses. 
 		 * If that is the case, just throw away the parentheses.
 		 */
 		return eval(p + 1, q - 1); 
+	}
+	else if (state == -1) {
+		fprintf(stderr, "Parentheses do not match");
+		return 0;
 	}
 	else {
 		//op = the position of dominant operator in the token expression;
