@@ -150,7 +150,7 @@ bool check_parentheses(int p, int q) {
 		panic("Parentheses do not match");
 
 	bool ret = tokens[p].type == '(' && tokens[q].type == ')' && !once_empty;	 
-	Log("%d", ret);
+	Log("ret = %d", ret);
 	return ret;
 }
 
