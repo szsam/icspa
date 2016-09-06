@@ -168,10 +168,12 @@ bool inside_pare(int ix, int begin, int end) {
 	/* parentheses are mathched, so we only need to check
 	 * whether there is '(' on the left of the token indexed by ix
 	 * [or ')' on the right] */
-	while (begin < ix) {
-		if (tokens[begin].type == '(')
+	for (--ix; begin <= ix; --ix) {
+		int t = tokens[ix].type;
+		if (t == '(')
 			return true;
-		++begin;
+		else if (t == ')')
+			return false;
 	}
 	return false;
 }
