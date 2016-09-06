@@ -148,7 +148,10 @@ bool check_parentheses(int p, int q) {
 
 	if (count > 0)
 		panic("Parentheses do not match");
-	return tokens[p].type == '(' && tokens[q].type == ')' && !once_empty;	
+
+	bool ret = tokens[p].type == '(' && tokens[q].type == ')' && !once_empty;	 
+	Log("%d", ret);
+	return ret;
 }
 
 //return the position of dominant operator in the token expression;
