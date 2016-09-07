@@ -335,6 +335,20 @@ uint32_t expr(char *e, bool *success) {
 	/* TODO: Insert codes to evaluate the expression. */
 	//panic("please implement me");
 	
+	// distinguish between DEREF and '*'
+	if (tokens[0].type == '*')
+		tokens[0].type = DEREF;
+	for(int i = 1; i < nr_token; i ++) {
+		if(tokens[i].type == '*' ) {
+			int prev_t = tokens[i - 1].type;
+			int is_mul = prev_t == DEC || prev_t == HEX || prev_t == REG || prev_t == ')'; 
+			if (!is_mul) { 
+				tokens[i].type = DEREF;
+				Log("tokens[%d].type = DEREF",i);
+			}
+		}
+	}
+
 	return eval(0, nr_token-1);
 }
 
