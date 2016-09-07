@@ -262,6 +262,7 @@ int dominant_operator(int p, int q) {
 	int ix = p;
 	while (!is_operator(tokens[ix].type) || inside_pare(ix, p, q))
 		++ix;
+	assert(ix <= q);
 
 	int ix_domin_oper = ix;
 
