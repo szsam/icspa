@@ -151,11 +151,9 @@ static bool make_token(char *e) {
 						tokens[nr_token].type = NOT;
 						break;
 						
-
 					default: panic("please implement me");
 				}
 
-				break;
 			}
 		}
 
@@ -230,10 +228,16 @@ bool inside_pare(int ix, int begin, int end) {
 
 int preced(int type) {   // the bigger the value, the lower the precedence
 	switch (type) {
-		case '*': case '/':
+		case '!': case DEREF:
 			return 1;
-		case '+': case '-':
+		case '*': case '/':
 			return 2;
+		case '+': case '-':
+			return 3;
+		case EQ: case NEQ:
+			return 4;
+		case AND: return 5;
+		case OR: return 6;
 		default:
 			assert(0);
 	}
@@ -252,7 +256,10 @@ int associat(int type)
 {
 	switch (type) {
 		case '+': case '-': case '*': case '/':
+		case EQ: case NEQ: case AND: case OR:
 			return LEFT;
+		case '!': case DEREF:
+			return RIGHT;
 		default:
 			assert(0);
 	}
@@ -284,6 +291,30 @@ int dominant_operator(int p, int q) {
 	return ix_domin_oper;
 }
 
+uint32_t reg_val(const char *reg_name)
+{
+	int ix;
+	for (ix = R_EAX; ix < R_EDI; ++ix)
+	{
+		if (!strcmp(reg_name, regsl[ix]))
+			return reg_l(ix);
+	}
+	for (ix = R_AX; ix < R_DI; ++ix)
+	{
+		if (!strcmp(reg_name, regsw[ix]))
+			return reg_w(ix);
+	}
+	for (ix = R_AL; ix < R_BH; ++ix)
+	{
+		if (!strcmp(reg_name, regsb[ix]))
+			return reg_b(ix);
+	}
+	if (!strcmp(reg_name, "eip"))
+		return cpu.eip;
+	else
+		panic("no such register");
+}
+
 uint32_t eval(int p, int q) {
 	int state;	//store return value of check_parentheses()
 
@@ -294,10 +325,24 @@ uint32_t eval(int p, int q) {
 	}
 	else if(p == q) { 
 		/* Single token.
-		 * For now this token should be a number. 
-		 * Return the value of the number.
+		 * For now this token should be a decmical number,
+		 *	hex number or name of a register. 
+		 * Return the value of it.
 		 */ 
-		return atoi(tokens[p].str);
+		switch (tokens[p].type) {
+			case DEC: return atoi(tokens[p].str);
+			case HEX: 
+			  {
+				  uint32_t tmp;
+				  sscanf(tokens[p].str, "%x", &tmp);
+				  return tmp;
+			  }
+			case REG:
+			  return reg_val(tokens[p].str);
+			default:
+			  assert(0);
+		}
+		
 	}
 	else if((state = check_parentheses(p, q)) == 0) {
 		/* The expression is surrounded by a matched pair of parentheses. 
@@ -312,15 +357,37 @@ uint32_t eval(int p, int q) {
 	else {
 		//op = the position of dominant operator in the token expression;
 		int op = dominant_operator(p, q);
-		uint32_t val1 = eval(p, op - 1);
-		uint32_t val2 = eval(op + 1, q);
 
-		switch(tokens[op].type) {
-			case '+': return val1 + val2;
-			case '-': return val1 - val2;
-			case '*': return val1 * val2; 
-			case '/': return val1 / val2; 
-			default: assert(0);
+		if (op == '!' || op == DEREF)	//unary operators
+		{
+			uint32_t val = eval(op+1, q);
+			switch(tokens[op].type) {
+				case '!': return !val;
+				case DEREF: 
+					return swaddr_read(val, 4);
+				default: assert(0);
+			}
+
+
+		}
+		else  //binary operators
+		{
+			uint32_t val1 = eval(p, op - 1);
+			uint32_t val2 = eval(op + 1, q);
+
+			switch(tokens[op].type) {
+				case '+': return val1 + val2;
+				case '-': return val1 - val2;
+				case '*': return val1 * val2; 
+				case '/': return val1 / val2; 
+				case EQ : return val1 == val2;
+				case NEQ : return val1 != val2;
+				case AND : return val1 && val2;
+				case OR : return val1 || val2;
+				
+				default: assert(0);
+			}
+
 		}
 	}
 }
