@@ -336,8 +336,11 @@ uint32_t expr(char *e, bool *success) {
 	//panic("please implement me");
 	
 	// distinguish between DEREF and '*'
-	if (tokens[0].type == '*')
+	if (tokens[0].type == '*') {
 		tokens[0].type = DEREF;
+		Log("tokens[%d].type = DEREF",0);
+	}
+
 	for(int i = 1; i < nr_token; i ++) {
 		if(tokens[i].type == '*' ) {
 			int prev_t = tokens[i - 1].type;
