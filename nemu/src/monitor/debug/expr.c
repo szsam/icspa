@@ -141,6 +141,7 @@ static bool make_token(char *e) {
 						
 					default: panic("please implement me");
 				}
+				break;
 
 			}
 		}
