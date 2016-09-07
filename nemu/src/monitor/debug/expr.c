@@ -93,26 +93,19 @@ static bool make_token(char *e) {
 				 */
 
 				switch(rules[i].token_type) {
-					case NOTYPE:
-						break;
+					case NOTYPE: break;
 					case '+':
-						tokens[nr_token++].type = '+';
-						break;
+						tokens[nr_token++].type = '+'; break;
 					case '-':
-						tokens[nr_token++].type = '-';
-						break;
+						tokens[nr_token++].type = '-'; break;
 					case '*':
-						tokens[nr_token++].type = '*';
-						break;
+						tokens[nr_token++].type = '*'; break;
 					case '/':
-						tokens[nr_token++].type = '/';
-						break;
+						tokens[nr_token++].type = '/'; break;
 					case '(':
-						tokens[nr_token++].type = '(';
-						break;
+						tokens[nr_token++].type = '('; break;
 					case ')':
-						tokens[nr_token++].type = ')';
-						break;
+						tokens[nr_token++].type = ')'; break;
 					case DEC:
 						tokens[nr_token].type = DEC;
 						if (substr_len > 31)
@@ -136,20 +129,15 @@ static bool make_token(char *e) {
 						++nr_token;
 						break;
 					case EQ:
-						tokens[nr_token].type = EQ;
-						break;
+						tokens[nr_token++].type = EQ; break;
 					case NEQ:
-						tokens[nr_token].type = NEQ;
-						break;
+						tokens[nr_token++].type = NEQ; break;
 					case AND:
-						tokens[nr_token].type = AND;
-						break;
+						tokens[nr_token++].type = AND; break;
 					case OR:
-						tokens[nr_token].type = OR;
-						break;
+						tokens[nr_token++].type = OR; break;
 					case NOT:
-						tokens[nr_token].type = NOT;
-						break;
+						tokens[nr_token++].type = NOT; break;
 						
 					default: panic("please implement me");
 				}
