@@ -232,7 +232,7 @@ int preced(int type) {   // the bigger the value, the lower the precedence
 }
 
 //compare precedences of two operators
-inline int preced_comp(int type1, int type2)		
+int preced_comp(int type1, int type2)		
 {
 	return preced(type1)-preced(type2);
 }
