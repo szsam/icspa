@@ -8,7 +8,8 @@
 #include <regex.h>
 
 enum {
-	NOTYPE = 256, EQ, DEC
+	NOTYPE = 256, EQ, DEC, HEX, REG,
+	NEQ, AND, OR, NOT, DEREF
 
 	/* TODO: Add more token types */
 
@@ -30,8 +31,14 @@ static struct rule {
 	{"/", '/'},						// division
 	{"\\(",'('},					// left-parenthese
 	{"\\)",')'},					// right-parenthese
+	{"0x[0-9a-fA-F]+", HEX},		// hex number, this rule must precede DEC's
+	{"[0-9][0-9]*", DEC},			// decmical number
+	{"\\$[A-Za-z]+", REG},			// register
 	{"==", EQ},						// equal
-	{"[0-9][0-9]*",DEC}				// decmical number
+	{"!=", NEQ},					// not equal
+	{"&&", AND},					// logic and
+	{"\\|\\|", OR},					// logic or
+	{"!", NOT},						// logic NOT
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -113,6 +120,37 @@ static bool make_token(char *e) {
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
 						++nr_token;
 						break;
+					case HEX:
+						tokens[nr_token].type = HEX;
+						if (substr_len > 31)
+							panic("buffer overflow");
+						strncpy(tokens[nr_token].str, substr_start, substr_len);
+						++nr_token;
+						break;
+					case REG:
+						tokens[nr_token].type = REG;
+						if (substr_len > 31)
+							panic("buffer overflow");
+						// drop the leading '$'
+						strncpy(tokens[nr_token].str, substr_start + 1, substr_len);
+						++nr_token;
+						break;
+					case EQ:
+						tokens[nr_token].type = EQ;
+						break;
+					case NEQ:
+						tokens[nr_token].type = NEQ;
+						break;
+					case AND:
+						tokens[nr_token].type = AND;
+						break;
+					case OR:
+						tokens[nr_token].type = OR;
+						break;
+					case NOT:
+						tokens[nr_token].type = NOT;
+						break;
+						
 
 					default: panic("please implement me");
 				}
@@ -247,7 +285,7 @@ int dominant_operator(int p, int q) {
 }
 
 uint32_t eval(int p, int q) {
-	int state;
+	int state;	//store return value of check_parentheses()
 
 	if(p > q) {
 		/* Bad expression */
