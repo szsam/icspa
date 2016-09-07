@@ -125,7 +125,7 @@ static bool make_token(char *e) {
 						if (substr_len > 31)
 							panic("buffer overflow");
 						// drop the leading '$'
-						strncpy(tokens[nr_token].str, substr_start + 1, substr_len);
+						strncpy(tokens[nr_token].str, substr_start + 1, substr_len - 1);
 						++nr_token;
 						break;
 					case EQ:
