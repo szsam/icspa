@@ -1,5 +1,6 @@
 #include "nemu.h"
 #include <stdlib.h>
+#include <ctype.h>
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
@@ -289,8 +290,12 @@ int dominant_operator(int p, int q) {
 	return ix_domin_oper;
 }
 
-uint32_t reg_val(const char *reg_name)
+uint32_t reg_val(char *reg_name)
 {
+	/* convert to lowercase */
+	for (char *pstr = reg_name; *pstr != '\0'; ++pstr)
+		*pstr = tolower(*pstr);
+
 	int ix;
 	for (ix = R_EAX; ix < R_EDI; ++ix)
 	{
