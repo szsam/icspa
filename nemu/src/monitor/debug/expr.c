@@ -348,8 +348,9 @@ uint32_t eval(int p, int q) {
 	else {
 		//op = the position of dominant operator in the token expression;
 		int op = dominant_operator(p, q);
+		int op_type = tokens[op].type;
 
-		if (op == '!' || op == DEREF)	//unary operators
+		if (op_type == '!' || op_type == DEREF)	//unary operators
 		{
 			uint32_t val = eval(op+1, q);
 			switch(tokens[op].type) {
