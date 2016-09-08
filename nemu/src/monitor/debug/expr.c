@@ -225,7 +225,7 @@ bool inside_pare(int ix, int begin, int end) {
 
 int preced(int type) {   // the bigger the value, the lower the precedence
 	switch (type) {
-		case '!': case DEREF:
+		case NOT: case DEREF:
 			return 1;
 		case '*': case '/':
 			return 2;
@@ -255,7 +255,7 @@ int associat(int type)
 		case '+': case '-': case '*': case '/':
 		case EQ: case NEQ: case AND: case OR:
 			return LEFT;
-		case '!': case DEREF:
+		case NOT: case DEREF:
 			return RIGHT;
 		default:
 			assert(0);
@@ -357,11 +357,11 @@ uint32_t eval(int p, int q) {
 		int op = dominant_operator(p, q);
 		int op_type = tokens[op].type;
 
-		if (op_type == '!' || op_type == DEREF)	//unary operators
+		if (op_type == NOT || op_type == DEREF)	//unary operators
 		{
 			uint32_t val = eval(op+1, q);
 			switch(tokens[op].type) {
-				case '!': return !val;
+				case NOT: return !val;
 				case DEREF: 
 					return swaddr_read(val, 4);
 				default: assert(0);
