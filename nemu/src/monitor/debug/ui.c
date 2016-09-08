@@ -130,10 +130,12 @@ static int cmd_info(char *args) {
 static int cmd_x(char *args) {
 	/* extract the first two arguments */
 	char *arg1 = strtok(NULL, " ");
-	char *arg2 = strtok(NULL, " ");
+	char *arg2 = arg1 + strlen(arg1) + 1;
 	int num = atoi(arg1);
-	swaddr_t addr;
-   	sscanf(arg2, "%x", &addr);
+	bool success;
+	swaddr_t addr = expr(arg2, &success);
+
+	if (!success) return 0;
 
 	for (int i = 0; i < num; i++) {
 		uint32_t data = swaddr_read(addr, 4);
