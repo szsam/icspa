@@ -193,6 +193,7 @@ int check_parentheses(int p, int q) {
 bool is_operator(int type) {
 	switch (type) {
 		case '+': case '-': case '*': case '/':
+		case EQ: case NEQ: case AND: case OR: case NOT:
 			return true;
 		default:
 			return false;
