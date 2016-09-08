@@ -93,55 +93,26 @@ static bool make_token(char *e) {
 				 * of tokens, some extra actions should be performed.
 				 */
 
+				if (substr_len > 31)
+					panic("buffer overflow");
+
+				if (rules[i].token_type == NOTYPE) break;
+
+				tokens[nr_token].type = rules[i].token_type;
+
 				switch(rules[i].token_type) {
-					case NOTYPE: break;
-					case '+':
-						tokens[nr_token++].type = '+'; break;
-					case '-':
-						tokens[nr_token++].type = '-'; break;
-					case '*':
-						tokens[nr_token++].type = '*'; break;
-					case '/':
-						tokens[nr_token++].type = '/'; break;
-					case '(':
-						tokens[nr_token++].type = '('; break;
-					case ')':
-						tokens[nr_token++].type = ')'; break;
-					case DEC:
-						tokens[nr_token].type = DEC;
-						if (substr_len > 31)
-							panic("buffer overflow");
+					case DEC: case HEX:
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
-						++nr_token;
-						break;
-					case HEX:
-						tokens[nr_token].type = HEX;
-						if (substr_len > 31)
-							panic("buffer overflow");
-						strncpy(tokens[nr_token].str, substr_start, substr_len);
-						++nr_token;
 						break;
 					case REG:
-						tokens[nr_token].type = REG;
-						if (substr_len > 31)
-							panic("buffer overflow");
 						// drop the leading '$'
 						strncpy(tokens[nr_token].str, substr_start + 1, substr_len - 1);
-						++nr_token;
 						break;
-					case EQ:
-						tokens[nr_token++].type = EQ; break;
-					case NEQ:
-						tokens[nr_token++].type = NEQ; break;
-					case AND:
-						tokens[nr_token++].type = AND; break;
-					case OR:
-						tokens[nr_token++].type = OR; break;
-					case NOT:
-						tokens[nr_token++].type = NOT; break;
-						
-					default: panic("please implement me");
+					default: //panic("please implement me");
+						;	//type information is enough, no need to store substr
 				}
+
+				++nr_token;
 				break;
 
 			}
