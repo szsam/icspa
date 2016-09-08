@@ -201,17 +201,24 @@ bool is_operator(int type) {
 }
 
 bool inside_pare(int ix, int begin, int end) {
-	/* parentheses are mathched, so we only need to check
-	 * whether there is '(' on the left of the token indexed by ix
-	 * [or ')' on the right] */
-	for (--ix; begin <= ix; --ix) {
-		int t = tokens[ix].type;
-		if (t == '(')
-			return true;
-		else if (t == ')')
-			return false;
+	/* use stack to check whether the operator indexed by ix
+	 * is inside a pair of pare */
+	assert(begin <= ix && ix <= end);
+
+	int count = 0;
+	for (int i = begin; i <= end; i++) {
+		if (tokens[i].type == '(')
+			++count;
+		else if (tokens[i].type == ')')
+			--count;
+		else if (ix == i) {
+			if (count > 0) return true; 
+			else return false;
+		}
+		
+
 	}
-	return false;
+	return false;	//control should never reaches here
 }
 	
 
