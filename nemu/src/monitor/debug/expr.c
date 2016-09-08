@@ -178,19 +178,17 @@ bool inside_pare(int ix, int begin, int end) {
 	assert(begin <= ix && ix <= end);
 
 	int count = 0;
-	for (int i = begin; i <= end; i++) {
-		if (tokens[i].type == '(')
+	while (begin < ix) {
+		if (tokens[begin].type == '(')
 			++count;
-		else if (tokens[i].type == ')')
+		else if (tokens[begin].type == ')')
 			--count;
-		else if (ix == i) {
-			if (count > 0) return true; 
-			else return false;
-		}
-		
-
+		++begin;
 	}
-	return false;	//control should never reaches here
+		
+	if (count > 0) return true; 
+	else return false;
+
 }
 	
 
