@@ -93,6 +93,8 @@ static bool make_token(char *e) {
 				 * of tokens, some extra actions should be performed.
 				 */
 
+				if (nr_token == 32)
+					panic("expression too long");
 				if (substr_len > 31)
 					panic("buffer overflow");
 
