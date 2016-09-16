@@ -58,3 +58,13 @@ void free_wp(int no) {
 	free_->next = cur;
 
 }
+
+void print_watchpoints() {
+	WP *p = head->next;
+	printf("Num\tExpression\n");
+
+	while (p != NULL) {
+		printf("%d\t%s\n", p->NO, p->expr);
+	}
+	
+}
