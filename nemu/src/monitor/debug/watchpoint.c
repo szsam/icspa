@@ -1,6 +1,7 @@
 #include "monitor/watchpoint.h"
 #include "monitor/expr.h"
 #include "monitor/monitor.h"
+#include "cpu/reg.h"
 
 #define NR_WP 32
 
@@ -88,6 +89,7 @@ void check_watchpoints() {
 			printf("Watchpoint %d: %s\n", p->NO, p->expr);
 			printf("Old value = %u\n", p->value);
 			printf("New value = %u\n", cur_val);
+			printf("at eip = 0x%x\n", cpu.eip);
 			p->value = cur_val;
 			return;
 		}
