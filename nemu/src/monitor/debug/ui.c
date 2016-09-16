@@ -127,8 +127,10 @@ static int cmd_info(char *args) {
 		printf("eip\t\t0x%x\t\t%d\n", cpu.eip, cpu.eip);
 	}
 	else if (!strcmp(arg, "w")) {
-	   //watchpoint
+		print_watchpoints();
 	}
+	else
+		assert(0);
 
 	return 0;
 }
