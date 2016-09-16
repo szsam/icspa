@@ -1,5 +1,6 @@
 #include "monitor/watchpoint.h"
 #include "monitor/expr.h"
+#include "monitor/monitor.h"
 
 #define NR_WP 32
 
@@ -61,6 +62,11 @@ void free_wp(int no) {
 
 void print_watchpoints() {
 	WP *p = head->next;
+	if (p == NULL) {
+		printf("No watchpoints.\n");
+		return;
+	}
+
 	printf("Num\tExpression\n");
 
 	while (p != NULL) {
@@ -68,4 +74,25 @@ void print_watchpoints() {
 		p = p->next;
 	}
 	
+}
+
+void check_watchpoints() {
+	WP *p = head->next;
+
+	while (p != NULL) {
+		bool success;
+		uint32_t cur_val = expr(p->expr, &success);
+		// don't need to check success, it must be true
+		if (cur_val != p->value) {	// NOT equal to last value
+			nemu_state = STOP;
+			printf("Watchpoint %d: %s\n", p->NO, p->expr);
+			printf("Old value = %u\n", p->value);
+			printf("New value = %u\n", cur_val);
+			p->value = cur_val;
+			return;
+		}
+
+		p = p->next;
+
+	}
 }
