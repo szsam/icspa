@@ -139,13 +139,11 @@ static bool make_token(char *e) {
 }
 
 /*
- * return value:
- *  0  parentheses match, and the expr is surrounded by a pair of parentheses
- *  1  parentheses match, but the expr is NOT surrounded by a pair of parentheses
- * -1  parentheses do NOT match, bad expr
+ *  Check whether the expr is surrounded by a matched pair of parentheses
+ *  return true if yes, otherwise false
+ *  When pares are not matched, longjmp is used
  */
-int check_parentheses(int p, int q) {
-	int ret;
+bool check_parentheses(int p, int q) {
 	int count = 0;
 	bool empty = false;
 
@@ -155,7 +153,7 @@ int check_parentheses(int p, int q) {
 		else if (tokens[ix].type == ')') {
 			--count;
 			if (count < 0)
-				return -1;
+				longjmp(env_buf, EPARE);
 			else if (count == 0 && ix != q)
 				empty = true;  //This means the expr is not surrounded by a pair of parentheses
 		}
@@ -163,14 +161,12 @@ int check_parentheses(int p, int q) {
 	}
 
 	if (count > 0)
-		return -1;
+		longjmp(env_buf, EPARE);
 
 	if (tokens[p].type == '(' && tokens[q].type == ')' && !empty)
-		ret = 0;
+		return true;
 	else
-		ret = 1;
-	//Log("ret = %d", ret);
-	return ret;
+		return false;
 }
 
 bool is_operator(int type) {
@@ -301,8 +297,6 @@ uint32_t reg_val(char *reg_name)
 }
 
 uint32_t eval(int p, int q) {
-	int state;	//store return value of check_parentheses()
-
 	if(p > q) {
 		/* Bad expression */
 		longjmp(env_buf, ESYN);
@@ -328,15 +322,11 @@ uint32_t eval(int p, int q) {
 		}
 		
 	}
-	else if((state = check_parentheses(p, q)) == 0) {
+	else if(check_parentheses(p, q)) {
 		/* The expression is surrounded by a matched pair of parentheses. 
 		 * If that is the case, just throw away the parentheses.
 		 */
 		return eval(p + 1, q - 1); 
-	}
-	else if (state == -1) {
-		fprintf(stderr, "Parentheses do not match\n");
-		return 0;
 	}
 	else {
 		//op = the position of dominant operator in the token expression;
@@ -412,14 +402,20 @@ uint32_t expr(char *e, bool *success) {
 	else { // an exception has happened
 		*success = false;
 		switch (ret) {
+			case EPARE:
+				fprintf(stderr, "Parentheses do not match\n");
+				break;
 			case EREG:
 				fprintf(stderr, "no such register\n");
 				break;
 			case ESYN:
 				fprintf(stderr, "syntax error\n");
 				break;
+			default:
+				assert(0);
 		}
 		return 0;
 	}
+	
 }
 
