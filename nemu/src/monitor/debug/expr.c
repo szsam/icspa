@@ -1,6 +1,11 @@
 #include "nemu.h"
 #include <stdlib.h>
 #include <ctype.h>
+#include <setjmp.h>
+
+jmp_buf env_buf;
+
+enum { EPARE = 1, EREG, ESYN };
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
@@ -93,10 +98,14 @@ static bool make_token(char *e) {
 				 * of tokens, some extra actions should be performed.
 				 */
 
-				if (nr_token == 32)
-					panic("expression too long");
-				if (substr_len > 31)
-					panic("buffer overflow");
+				if (nr_token == 32) {
+					fprintf(stderr, "expression too long\n");
+					return false;
+				}
+				if (substr_len > 31) {
+					fprintf(stderr, "buffer overflow\n");
+					return false;
+				}
 
 				if (rules[i].token_type == NOTYPE) break;
 
@@ -285,8 +294,10 @@ uint32_t reg_val(char *reg_name)
 	}
 	if (!strcmp(reg_name, "eip"))
 		return cpu.eip;
-	else
-		panic("no such register");
+	else {
+		longjmp(env_buf, EREG);
+	}
+		
 }
 
 uint32_t eval(int p, int q) {
@@ -294,8 +305,7 @@ uint32_t eval(int p, int q) {
 
 	if(p > q) {
 		/* Bad expression */
-		//assert(0);
-		panic("Bad expression");
+		longjmp(env_buf, ESYN);
 	}
 	else if(p == q) { 
 		/* Single token.
@@ -314,7 +324,7 @@ uint32_t eval(int p, int q) {
 			case REG:
 			  return reg_val(tokens[p].str);
 			default:
-			  assert(0);
+			  longjmp(env_buf, ESYN);
 		}
 		
 	}
@@ -369,6 +379,7 @@ uint32_t eval(int p, int q) {
 
 uint32_t expr(char *e, bool *success) {
 	*success = true;
+
 	if(!make_token(e)) {
 		*success = false;
 		return 0;
@@ -394,6 +405,21 @@ uint32_t expr(char *e, bool *success) {
 		}
 	}
 
-	return eval(0, nr_token-1);
+	int ret = setjmp(env_buf);
+	if (ret == 0) {
+		return eval(0, nr_token-1);
+	}
+	else { // an exception has happened
+		*success = false;
+		switch (ret) {
+			case EREG:
+				fprintf(stderr, "no such register\n");
+				break;
+			case ESYN:
+				fprintf(stderr, "syntax error\n");
+				break;
+		}
+		return 0;
+	}
 }
 
