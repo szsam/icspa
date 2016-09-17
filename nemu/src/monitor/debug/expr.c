@@ -114,10 +114,12 @@ static bool make_token(char *e) {
 				switch(rules[i].token_type) {
 					case DEC: case HEX:
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
+						tokens[nr_token].str[substr_len] = '\0';
 						break;
 					case REG:
 						// drop the leading '$'
 						strncpy(tokens[nr_token].str, substr_start + 1, substr_len - 1);
+						tokens[nr_token].str[substr_len-1] = '\0';
 						break;
 					default: //panic("please implement me");
 						;	//type information is enough, no need to store substr
