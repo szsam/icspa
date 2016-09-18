@@ -196,7 +196,7 @@ static int cmd_d(char *args) {
 
 	if(arg == NULL) {
 		/* no argument given */
-		assert(0);
+		fprintf(stderr, "Need a number. Try 'help d'\n");
 	}
 	else {
 		int number = atoi(arg);
