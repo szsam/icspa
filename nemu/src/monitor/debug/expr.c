@@ -370,6 +370,8 @@ uint32_t eval(int p, int q) {
 }
 
 uint32_t expr(char *e, bool *success) {
+	assert(e);
+
 	*success = true;
 
 	if(!make_token(e)) {
