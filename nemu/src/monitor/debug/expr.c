@@ -37,7 +37,7 @@ static struct rule {
 	{"/", '/'},						// division
 	{"\\(",'('},					// left-parenthese
 	{"\\)",')'},					// right-parenthese
-	{"0x[0-9a-fA-F]+", HEX},		// hex number, this rule must precede DEC's
+	{"0[xX][0-9a-fA-F]+", HEX},		// hex number, this rule must precede DEC's
 	{"[0-9][0-9]*", DEC},			// decmical number
 	{"\\$[A-Za-z]+", REG},			// register
 	{"==", EQ},						// equal
