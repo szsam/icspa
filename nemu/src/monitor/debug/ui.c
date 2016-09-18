@@ -130,7 +130,7 @@ static int cmd_info(char *args) {
 		print_watchpoints();
 	}
 	else
-		assert(0);
+		fprintf(stderr, "Unknown info command '%s'\n", arg);
 
 	return 0;
 }
