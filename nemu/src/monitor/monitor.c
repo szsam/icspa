@@ -89,6 +89,9 @@ void restart() {
 
     /* Initialize EFLAGS register */
     cpu.EFLAGS = 0x2;
+    cpu.CF = 1;
+    cpu.OF = 0;
+    cpu.SF = 1;
 
 	/* Initialize DRAM. */
 	init_ddr3();
