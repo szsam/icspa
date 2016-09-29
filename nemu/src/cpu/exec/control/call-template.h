@@ -7,8 +7,8 @@ static void do_execute() {
 	/* OPERAND_W(op_src, result); */
     DATA_TYPE_S offset = op_src->simm;
     cpu.esp -= DATA_BYTE;
-    swaddr_write(cpu.esp, DATA_BYTE, cpu.eip + DATA_BYTE);
-    cpu.eip += offset; 
+    swaddr_write(cpu.esp, DATA_BYTE, cpu.eip + DATA_BYTE + 1);
+    cpu.eip = (DATA_TYPE_S)cpu.eip + offset; 
 	print_asm_template1();
 }
 
