@@ -31,7 +31,7 @@ typedef struct {
 
     swaddr_t eip;
 
-    struct {
+    union {
         struct {
            unsigned CF      :1;
            unsigned         :1;
