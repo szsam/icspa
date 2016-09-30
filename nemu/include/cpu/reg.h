@@ -32,6 +32,10 @@ typedef struct {
     swaddr_t eip;
 
     union {
+        /* Assume the first bit field is loaded into the lowest-order bit
+         * and the second bit field the second lowest-order bit,
+         * and so on
+         */
         struct {
            unsigned CF      :1;
            unsigned         :1;
