@@ -164,11 +164,25 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-	bool success;
-	uint32_t res = expr(args, &success);
-	
-	if (success)
-		printf("%u\n", res);
+	if (!strcmp(args, "$eflags")) {
+		char flags[32] = "[ ";
+		if (cpu.CF) strcat(flags, "CF ");
+		if (cpu.PF) strcat(flags, "PF ");
+		if (cpu.ZF) strcat(flags, "ZF ");
+		if (cpu.SF) strcat(flags, "SF ");
+		if (cpu.IF) strcat(flags, "IF ");
+		if (cpu.DF) strcat(flags, "DF ");
+		if (cpu.OF) strcat(flags, "OF ");
+		strcat(flags, "]");
+		printf("%s\n", flags);
+	}
+	else {
+		bool success;
+		uint32_t res = expr(args, &success);
+
+		if (success)
+			printf("%u\n", res);
+	}
 	return 0;
 }
 
