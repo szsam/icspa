@@ -292,6 +292,8 @@ uint32_t reg_val(char *reg_name)
 	}
 	if (!strcmp(reg_name, "eip"))
 		return cpu.eip;
+	else if (!strcmp(reg_name, "eflags"))
+		return cpu.EFLAGS;
 	else {
 		longjmp(env_buf, EREG);
 	}
