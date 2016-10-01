@@ -164,7 +164,9 @@ static int cmd_x(char *args) {
 }
 
 static int cmd_p(char *args) {
-	if (!strcmp(args, "$eflags")) {
+	char tok[8];
+	sscanf(args, "%7s", tok);
+	if (!strcmp(tok, "$eflags")) {
 		char flags[32] = "[ ";
 		if (cpu.CF) strcat(flags, "CF ");
 		if (cpu.PF) strcat(flags, "PF ");
