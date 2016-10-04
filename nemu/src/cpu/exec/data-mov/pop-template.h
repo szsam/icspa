@@ -13,14 +13,19 @@ static void do_execute() {
      ESP ← ESP + 4;
    FI;
 */
-	if (ops_decoded.is_operand_size_16) {
-		swaddr_write(cpu.esp, 2, op_src->val);
-		cpu.esp += 2;
-	}	
-	else {
-		swaddr_write(cpu.esp, 4, op_src->val);
-		cpu.esp += 4;
-	}
+//	if (ops_decoded.is_operand_size_16) {
+//		swaddr_write(cpu.esp, 2, op_src->val);
+//		cpu.esp += 2;
+//	}	
+//	else {
+//		swaddr_write(cpu.esp, 4, op_src->val);
+//		cpu.esp += 4;
+//	}
+
+	/* the following implementation should also work. */
+	MEM_W(cpu.esp, op_src->val);
+	cpu.esp += DATA_BYTE;
+
 	print_asm_template1();
 }
 
