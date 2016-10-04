@@ -3,14 +3,29 @@
 #define instr pop
 
 static void do_execute() {
-	uint32_t temp = swaddr_read(cpu.esp, DATA_BYTE);
-	OPERAND_W(op_src, temp);
-	cpu.esp += DATA_BYTE;
-
+/*
+   IF OperandSize = 16
+   THEN
+     DEST ← (SS:ESP); (* copy a word *)
+     ESP ← ESP + 2;
+   ELSE (* OperandSize = 32 *)
+     DEST ← (SS:ESP); (* copy a dword *)
+     ESP ← ESP + 4;
+   FI;
+*/
+	if (ops_decoded.is_operand_size_16) {
+		swaddr_write(cpu.esp, 2, op_src->val);
+		cpu.esp += 2;
+	}	
+	else {
+		swaddr_write(cpu.esp, 4, op_src->val);
+		cpu.esp += 4;
+	}
 	print_asm_template1();
 }
 
 make_instr_helper(r)
+make_instr_helper(rm)
 
 
 #include "cpu/exec/template-end.h"
