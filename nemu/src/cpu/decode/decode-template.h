@@ -1,4 +1,5 @@
 #include "cpu/exec/template-start.h"
+#include "cpu/exec/flags.h"
 
 #include "cpu/decode/modrm.h"
 
