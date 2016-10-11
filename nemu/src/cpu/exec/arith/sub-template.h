@@ -9,8 +9,8 @@ static void do_execute() {
 	cpu.SF = MSB(result);
 	cpu.ZF = (result == 0);
 	cpu.PF = EVEN_PARITY(result);
-	cpu.CF = USUB_OK(op_dest->val, op_src->val);
-	cpu.OF = TSUB_OK(op_dest->val, op_src->val);
+	cpu.CF = !USUB_OK(op_dest->val, op_src->val);
+	cpu.OF = !TSUB_OK(op_dest->val, op_src->val);
 
 	OPERAND_W(op_dest, result);
 

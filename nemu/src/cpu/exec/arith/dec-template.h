@@ -1,13 +1,19 @@
 #include "cpu/exec/template-start.h"
+#include "cpu/exec/flags.h"
 
 #define instr dec
 
 static void do_execute () {
 	DATA_TYPE result = op_src->val - 1;
-	OPERAND_W(op_src, result);
 
 	/* TODO: Update EFLAGS. */
-	panic("please implement me");
+	//panic("please implement me");
+	cpu.OF = !TSUB_OK(op_src->val, 1);
+	cpu.SF = MSB(result);
+	cpu.ZF = (result == 0);
+	cpu.PF = EVEN_PARITY(result);
+
+	OPERAND_W(op_src, result);
 
 	print_asm_template1();
 }
