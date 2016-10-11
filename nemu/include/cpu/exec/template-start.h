@@ -33,3 +33,5 @@
 #define OPERAND_W(op, src) concat(write_operand_, SUFFIX) (op, src)
 
 #define MSB(n) ((DATA_TYPE)(n) >> ((DATA_BYTE << 3) - 1))
+
+#define EVEN_PARITY(data) concat(even_parity_, SUFFIX)(data)

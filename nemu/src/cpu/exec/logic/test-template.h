@@ -1,4 +1,5 @@
 #include "cpu/exec/template-start.h"
+#include "cpu/exec/flags.h"
 
 #define instr test
 
@@ -10,12 +11,7 @@ static void do_execute () {
 	cpu.SF = MSB(result);
 	cpu.ZF = (result == 0);
 
-	int count = 0;	//the number of '1'
-	for (int i = 0; i<DATA_BYTE*8-1; i++) {
-		count += result & 0x1;
-		result >>= 1;
-	}
-	cpu.PF = (count % 2 == 0);
+	cpu.PF = EVEN_PARITY(result);
 
 	print_asm_template2();
 }
