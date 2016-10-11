@@ -35,3 +35,12 @@
 #define MSB(n) ((DATA_TYPE)(n) >> ((DATA_BYTE << 3) - 1))
 
 #define EVEN_PARITY(data) concat(even_parity_, SUFFIX)(data)
+
+#define UADD_OK(a, b) concat(uadd_ok_, SUFFIX)(a, b)
+
+#define TADD_OK(a, b) concat(tadd_ok_, SUFFIX)(a, b)
+
+#define USUB_OK(a, b) concat(usub_ok_, SUFFIX)(a, b)
+
+#define TSUB_OK(a, b) concat(tsub_ok_, SUFFIX)(a, b)
+
