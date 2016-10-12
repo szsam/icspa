@@ -2,16 +2,16 @@
 
 #define instr call
 
-static void do_execute() {
-	/* DATA_TYPE result = ~op_src->val; */
-	/* OPERAND_W(op_src, result); */
-    DATA_TYPE_S offset = op_src->simm;
+// Actually, only 'call rel32' is implemented correctly
+make_helper(concat(call_rel_, SUFFIX)) {
+    DATA_TYPE_S offset = instr_fetch(eip + 1, DATA_BYTE);
     cpu.esp -= DATA_BYTE;
-    swaddr_write(cpu.esp, DATA_BYTE, cpu.eip + DATA_BYTE + 1);
-    cpu.eip = (DATA_TYPE_S)cpu.eip + offset; 
-	print_asm_template1();
-}
+    swaddr_write(cpu.esp, DATA_BYTE, eip + DATA_BYTE + 1);
+    cpu.eip += (int32_t)offset; 
 
-make_instr_helper(si)
+	print_asm("call %x", eip + DATA_BYTE + 1);	
+
+	return 1 + DATA_BYTE;
+}
 
 #include "cpu/exec/template-end.h"
