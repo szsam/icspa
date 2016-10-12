@@ -90,7 +90,7 @@ static bool make_token(char *e) {
 				char *substr_start = e + position;
 				int substr_len = pmatch.rm_eo;
 
-				Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
+//				Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
 				position += substr_len;
 
 				/* TODO: Now a new token is recognized with rules[i]. Add codes
@@ -387,7 +387,7 @@ uint32_t expr(char *e, bool *success) {
 	// distinguish between DEREF and '*'
 	if (tokens[0].type == '*') {
 		tokens[0].type = DEREF;
-		Log("tokens[%d].type = DEREF",0);
+		//Log("tokens[%d].type = DEREF",0);
 	}
 
 	for(int i = 1; i < nr_token; i ++) {
@@ -396,7 +396,7 @@ uint32_t expr(char *e, bool *success) {
 			int is_mul = prev_t == DEC || prev_t == HEX || prev_t == REG || prev_t == ')'; 
 			if (!is_mul) { 
 				tokens[i].type = DEREF;
-				Log("tokens[%d].type = DEREF",i);
+				//Log("tokens[%d].type = DEREF",i);
 			}
 		}
 	}
