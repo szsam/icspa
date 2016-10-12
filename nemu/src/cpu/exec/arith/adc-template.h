@@ -9,7 +9,7 @@ static void do_execute() {
 	cpu.SF = MSB(result);
 	cpu.ZF = (result == 0);
 	cpu.PF = EVEN_PARITY(result);
-    cpu.CF = !UADD_OK(op_dest->val, op_src->val) || !UADD_OK(op_dest->val+op_src->val, 1);
+    cpu.CF = !UADD_OK(op_dest->val, op_src->val) || !UADD_OK(op_dest->val+op_src->val, cpu.CF);
     cpu.OF = !TADD_OK(op_dest->val, op_src->val);	// this is buggy!
 
 	OPERAND_W(op_dest, result);
