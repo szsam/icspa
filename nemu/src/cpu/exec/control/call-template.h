@@ -9,7 +9,7 @@ make_helper(concat(call_rel_, SUFFIX)) {
     swaddr_write(cpu.esp, DATA_BYTE, eip + DATA_BYTE + 1);
     cpu.eip += (int32_t)offset; 
 
-	print_asm("call %x", eip + DATA_BYTE + 1);	
+	print_asm("call %x", eip + DATA_BYTE + 1 + (int32_t)offset);	
 
 	return 1 + DATA_BYTE;
 }
