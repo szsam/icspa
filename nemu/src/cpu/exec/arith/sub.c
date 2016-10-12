@@ -14,7 +14,7 @@
 
 /* for instruction encoding overloading */
 
-make_helper_v(sub_i2r)
+make_helper_v(sub_i2a)
 make_helper_v(sub_i2rm)
 make_helper_v(sub_r2rm)
 make_helper_v(sub_rm2r)
