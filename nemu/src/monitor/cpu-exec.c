@@ -20,6 +20,8 @@ char asm_buf[128];
 /* Used with exception handling. */
 jmp_buf jbuf;
 
+bool do_not_add_instr_len_to_eip = false;
+
 void print_bin_instr(swaddr_t eip, int len) {
 	int i;
 	int l = sprintf(asm_buf, "%8x:   ", eip);
@@ -60,9 +62,11 @@ void cpu_exec(volatile uint32_t n) {
 
 		/* Execute one instruction, including instruction fetch,
 		 * instruction decode, and the actual execution. */
+		do_not_add_instr_len_to_eip = false;
 		int instr_len = exec(cpu.eip);
 
-		cpu.eip += instr_len;
+		if (!do_not_add_instr_len_to_eip)
+			cpu.eip += instr_len;
 
 #ifdef DEBUG
 		print_bin_instr(eip_temp, instr_len);

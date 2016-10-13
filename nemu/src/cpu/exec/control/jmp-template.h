@@ -1,4 +1,5 @@
 #include "cpu/exec/template-start.h"
+#include "monitor/monitor.h"
 
 #define instr jmp
 
@@ -10,6 +11,7 @@ static void do_execute() {
 	}
 	else {
 		cpu.eip = op_src->val;
+		do_not_add_instr_len_to_eip = true;
 		print_asm("jmp *%s", op_src->str);
 	}
 }
