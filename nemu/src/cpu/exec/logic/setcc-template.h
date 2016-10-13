@@ -7,7 +7,7 @@ static void do_execute() {
 	print_asm(str(instr)" %s", op_src->str);
 }
 
-make_instr_helper(si)
+make_instr_helper(rm)
 
 #undef instr
 	
@@ -19,7 +19,7 @@ static void do_execute() {
 	print_asm(str(instr)" %s", op_src->str);
 }
 
-make_instr_helper(si)
+make_instr_helper(rm)
 
 #undef instr
 	
@@ -30,7 +30,7 @@ static void do_execute() {
 	print_asm(str(instr)" %s", op_src->str);
 }
 
-make_instr_helper(si)
+make_instr_helper(rm)
 
 #undef instr
 
@@ -42,7 +42,7 @@ static void do_execute() {
 	print_asm(str(instr)" %s", op_src->str);
 }
 
-make_instr_helper(si)
+make_instr_helper(rm)
 
 #undef instr
 
@@ -54,7 +54,7 @@ static void do_execute() {
 	print_asm(str(instr)" %s", op_src->str);
 }
 
-make_instr_helper(si)
+make_instr_helper(rm)
 
 #undef instr
 
@@ -66,7 +66,7 @@ static void do_execute() {
 	print_asm(str(instr)" %s", op_src->str);
 }
 
-make_instr_helper(si)
+make_instr_helper(rm)
 
 #undef instr
 
@@ -78,7 +78,7 @@ static void do_execute() {
 	print_asm(str(instr)" %s", op_src->str);
 }
 
-make_instr_helper(si)
+make_instr_helper(rm)
 
 #undef instr
 
@@ -90,7 +90,7 @@ static void do_execute() {
 	print_asm(str(instr)" %s", op_src->str);
 }
 
-make_instr_helper(si)
+make_instr_helper(rm)
 
 #undef instr
 
@@ -101,7 +101,7 @@ static void do_execute() {
 	print_asm(str(instr)" %s", op_src->str);
 }
 
-make_instr_helper(si)
+make_instr_helper(rm)
 
 #undef instr
 
@@ -113,7 +113,7 @@ static void do_execute() {
 	print_asm(str(instr)" %s", op_src->str);
 }
 
-make_instr_helper(si)
+make_instr_helper(rm)
 
 #undef instr
 
