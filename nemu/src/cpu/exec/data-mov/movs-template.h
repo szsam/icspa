@@ -8,6 +8,9 @@ make_helper(concat(movs_, SUFFIX)) {
 	int IncDec = cpu.DF ? -DATA_BYTE : DATA_BYTE;
 	cpu.esi += IncDec;
 	cpu.edi += IncDec;
+
+	print_asm(str(instr) str(SUFFIX));
+
 	return 1;
 }
 
