@@ -23,7 +23,8 @@ static void do_execute() {
 //	}
 
 	/* the following implementation should also work. */
-	MEM_W(cpu.esp, op_src->val);
+	DATA_TYPE data = MEM_R(cpu.esp);
+	OPERAND_W(op_src, data);
 	cpu.esp += DATA_BYTE;
 
 	print_asm_template1();
