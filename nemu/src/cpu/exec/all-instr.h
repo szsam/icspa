@@ -6,6 +6,7 @@
 #include "data-mov/pop.h"
 #include "data-mov/leave.h"
 #include "data-mov/cwd_cdq.h"
+#include "data-mov/movzx.h"
 
 #include "arith/dec.h"
 #include "arith/inc.h"
