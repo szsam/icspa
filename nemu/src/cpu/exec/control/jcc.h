@@ -11,6 +11,7 @@ make_helper(jg_si_b);
 make_helper(jge_si_b);
 make_helper(jl_si_b);
 make_helper(jle_si_b);
+make_helper(js_si_b);
 
 make_helper(je_si_l);
 make_helper(jne_si_l);
@@ -22,6 +23,7 @@ make_helper(jg_si_l);
 make_helper(jge_si_l);
 make_helper(jl_si_l);
 make_helper(jle_si_l);
+make_helper(js_si_l);
 
 
 #endif
