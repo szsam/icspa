@@ -1,4 +1,5 @@
 #include "cpu/exec/template-start.h"
+#include "monitor/monitor.h"
 
 // #define instr call
 
@@ -24,6 +25,7 @@ make_helper(call_rm_l) {
     swaddr_write(cpu.esp, 4, cpu.eip + len + 1);
 
     cpu.eip = op_src->val; 
+	do_not_add_instr_len_to_eip = true;
 
 	print_asm("call *%s", op_src->str);	
 
