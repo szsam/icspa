@@ -173,4 +173,20 @@ make_instr_helper(si)
 
 #undef instr
 
+
+#define instr jns
+
+static void do_execute() {
+    uint32_t offset = op_src->val;
+
+	if (!cpu.SF) {
+		cpu.eip += offset;
+	}
+	print_asm(str(instr)" %x", cpu.eip + 1 + DATA_BYTE);
+}
+
+make_instr_helper(si)
+
+#undef instr
+
 #include "cpu/exec/template-end.h"
