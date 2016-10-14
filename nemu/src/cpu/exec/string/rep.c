@@ -26,7 +26,8 @@ make_helper(rep) {
 				);
 
 			/* TODO: Jump out of the while loop if necessary. */
-			if (!cpu.ZF) break;
+			bool is_scas = ops_decoded.opcode == 0xae || ops_decoded.opcode == 0xaf;
+			if (is_scas && !cpu.ZF) break;
 
 		}
 		len = 1;
@@ -54,7 +55,8 @@ make_helper(repnz) {
 			  );
 
 		/* TODO: Jump out of the while loop if necessary. */
-		if (cpu.ZF) break;
+		bool is_scas = ops_decoded.opcode == 0xae || ops_decoded.opcode == 0xaf;
+		if (is_scas && cpu.ZF) break;
 
 	}
 
