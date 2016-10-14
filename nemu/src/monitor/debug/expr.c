@@ -275,17 +275,17 @@ uint32_t reg_val(char *reg_name)
 		*pstr = tolower(*pstr);
 
 	int ix;
-	for (ix = R_EAX; ix < R_EDI; ++ix)
+	for (ix = R_EAX; ix <= R_EDI; ++ix)
 	{
 		if (!strcmp(reg_name, regsl[ix]))
 			return reg_l(ix);
 	}
-	for (ix = R_AX; ix < R_DI; ++ix)
+	for (ix = R_AX; ix <= R_DI; ++ix)
 	{
 		if (!strcmp(reg_name, regsw[ix]))
 			return reg_w(ix);
 	}
-	for (ix = R_AL; ix < R_BH; ++ix)
+	for (ix = R_AL; ix <= R_BH; ++ix)
 	{
 		if (!strcmp(reg_name, regsb[ix]))
 			return reg_b(ix);
