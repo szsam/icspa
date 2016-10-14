@@ -1,8 +1,8 @@
 #include "FLOAT.h"
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
-	nemu_assert(0);
-	return 0;
+	// nemu_assert(0);
+	return (a * b) >> 16;
 }
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
@@ -24,8 +24,8 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 * out another way to perform the division.
 	 */
 
-	nemu_assert(0);
-	return 0;
+	// nemu_assert(0);
+	return ((a/b) << 16) + a%b;
 }
 
 FLOAT f2F(float a) {
@@ -39,13 +39,36 @@ FLOAT f2F(float a) {
 	 * performing arithmetic operations on it directly?
 	 */
 
-	nemu_assert(0);
-	return 0;
+	// nemu_assert(0);
+	// Assume 'a' is normalized
+	FLOAT res;
+	union {
+		struct {
+			unsigned frac : 23;
+			unsigned exp : 8;
+			unsigned sgn : 1;
+		};
+		float f;
+	}un;
+	un.f = a;
+
+	un.exp += 16;	// multiply (2^16)
+
+	int E = un.exp - 127;
+	res = un.frac;
+	if (E<23) res >>= (23-E);
+	else res <<= (E-23);
+
+	res |= (1<<E);
+
+	if (un.sgn) res = -res;
+
+	return res;
 }
 
 FLOAT Fabs(FLOAT a) {
-	nemu_assert(0);
-	return 0;
+	// nemu_assert(0);
+	return a > 0 ? a : -a;
 }
 
 /* Functions below are already implemented */
