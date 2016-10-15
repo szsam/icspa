@@ -37,7 +37,9 @@ int main() {
 
 	nemu_assert(F_div_int(b, 9) == int2F(4));
 
-	nemu_assert(F_mul_F(f2F(12.1),f2F(25.3)) == f2F(306.13));
+	FLOAT c = F_mul_F(f2F(12.1),f2F(25.3));
+	FLOAT d = f2F(306.13);
+	nemu_assert(Fabs(c-d) < f2F(1e-4));
 
 	return 0;
 }
