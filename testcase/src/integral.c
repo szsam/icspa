@@ -19,10 +19,13 @@ FLOAT computeT(int n, FLOAT a, FLOAT b, FLOAT (*fun)(FLOAT)) {
 }
 
 int main() { 
-	FLOAT a = computeT(10, f2F(-1.0), f2F(1.0), f);
-	FLOAT ans = f2F(0.551222);
-
-	nemu_assert(Fabs(a - ans) < f2F(1e-4));
+//	FLOAT a = computeT(10, f2F(-1.0), f2F(1.0), f);
+//	FLOAT ans = f2F(0.551222);
+//
+//	nemu_assert(Fabs(a - ans) < f2F(1e-4));
+	
+	int a = F2int(f2F(12.0));
+	nemu_assert(a == 12);
 
 	return 0;
 }
