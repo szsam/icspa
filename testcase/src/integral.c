@@ -32,5 +32,8 @@ int main() {
 	nemu_assert(f2F(127.0) == int2F(127));
 	nemu_assert(f2F(12345.0) == int2F(12345));
 
+	nemu_assert(Fabs(b) == b);
+	nemu_assert(Fabs(f2F(-34.56)) == f2F(34.56));
+
 	return 0;
 }
