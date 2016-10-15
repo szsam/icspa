@@ -45,7 +45,7 @@ FLOAT f2F(float a) {
 
 	// nemu_assert(0);
 	// Assume 'a' is normalized
-	FLOAT res;
+	FLOAT res = 0;
 	union {
 		struct {
 			unsigned frac : 23;
