@@ -29,5 +29,8 @@ int main() {
 	FLOAT b = F_mul_int( int2F(a), 3);
 	nemu_assert(b == f2F(36.0));
 
+	nemu_assert(f2F(127.0) == int2F(127));
+	nemu_assert(f2F(12345.0) == int2F(12345));
+
 	return 0;
 }
