@@ -39,7 +39,7 @@ int main() {
 
 	FLOAT c = F_mul_F(f2F(12.1),f2F(25.3));
 	FLOAT d = f2F(306.13);
-	nemu_assert(Fabs(c-d) < f2F(1e-2));
+	nemu_assert(Fabs(c-d) < f2F(1e-3));
 
 	return 0;
 }
