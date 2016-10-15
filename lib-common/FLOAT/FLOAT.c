@@ -6,7 +6,7 @@ FLOAT F_mul_F(FLOAT a, FLOAT b) {
 	FLOAT bl = b & 0xff;
 	FLOAT ah = a >> 8;
 	FLOAT bh = b >> 8;
-	return ((al*bh) >> 16) + ((al*bh + ah*bl) >> 8) + ah*bh;
+	return /*((al*bh) >> 16) + ((al*bh + ah*bl) >> 8) +*/ ah*bh;
 }
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
