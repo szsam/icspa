@@ -1,6 +1,8 @@
 #include "trap.h"
 #include "FLOAT.h"
 
+#define EPSILON 2*1e-4
+
 FLOAT f(FLOAT x) { 
 	/* f(x) = 1/(1+25x^2) */
 	return F_div_F(int2F(1), int2F(1) + F_mul_int(F_mul_F(x, x), 25));
@@ -42,11 +44,11 @@ int main() {
 	nemu_assert(f2F(12.1) == 792986);
 	nemu_assert(f2F(25.3) == 1658061);
 	nemu_assert(c == 20062548);
- 	nemu_assert(Fabs(c-d) < f2F(2*1e-4));
+ 	nemu_assert(Fabs(c-d) < f2F(EPSILON));
  
-// 	FLOAT aa = f2F(2.0909);
-// 	FLOAT bb = F_div_F(f2F(25.3),f2F(12.1));
-// 	nemu_assert(Fabs(aa-bb) < f2F(1e-4));
+ 	FLOAT aa = f2F(2.0909);
+ 	FLOAT bb = F_div_F(f2F(25.3),f2F(12.1));
+ 	nemu_assert(Fabs(aa-bb) < f2F(EPSILON));
 
 	return 0;
 }
