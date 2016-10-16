@@ -64,7 +64,15 @@ FLOAT f2F(float a) {
 
 	int E = un.exp - 127;
 	res = un.frac;
-	if (E<23) res >>= (23-E);
+	if (E<23) {
+		int mask1 = (1<<(23-E))-1;
+		int mask2 = (1<<(24-E))-1;
+		if ( ((un.frac & mask1) > (1<<(22-E))) ||
+			((un.frac & mask2) == (1<<(23-E)) + (1<<(22-E))) )
+			res = (res >> (23-E)) + 1;
+		else
+			res >>= (23-E);
+	}
 	else res <<= (E-23);
 
 	res |= (1<<E);
