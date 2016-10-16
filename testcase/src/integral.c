@@ -1,7 +1,7 @@
 #include "trap.h"
 #include "FLOAT.h"
 
-#define EPSILON 2*1e-4
+#define EPSILON 5*1e-4
 
 FLOAT f(FLOAT x) { 
 	/* f(x) = 1/(1+25x^2) */
