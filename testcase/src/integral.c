@@ -41,7 +41,7 @@ int main() {
  	//FLOAT d = f2F(306.13);
 	nemu_assert(f2F(12.1) == 792986);
 	nemu_assert(f2F(25.3) == 1658061);
-	nemu_assert(c == 20062546);
+	nemu_assert(c == 20062545);
  	// nemu_assert(Fabs(c-d) < f2F(1e-3));
  
 // 	FLOAT aa = f2F(2.0909);
