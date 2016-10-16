@@ -43,7 +43,7 @@ int main() {
  
  	FLOAT aa = f2F(2.0909);
  	FLOAT bb = F_div_F(f2F(25.3),f2F(12.1));
- 	nemu_assert(Fabs(aa-bb) < f2F(1e-4));
+ 	nemu_assert(Fabs(aa-bb) < f2F(1e-3));
 
 	return 0;
 }
