@@ -31,7 +31,9 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 */
 
 	// nemu_assert(0);
-	return ((a/b) << 16) + a%b;
+	a <<= 8;
+	b >>= 8;
+	return a/b;
 }
 
 FLOAT f2F(float a) {
