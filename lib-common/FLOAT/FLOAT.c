@@ -31,9 +31,15 @@ FLOAT F_div_F(FLOAT a, FLOAT b) {
 	 */
 
 	// nemu_assert(0);
-	a <<= 8;
-	b >>= 8;
-	return a/b;
+	long long dividend = (long long)a << 16;
+	int dividend_h32 = (int)(dividend >> 32);
+	int dividend_l32 = (int)dividend;
+	FLOAT res;
+	int dummy;
+
+	asm volatile ("idiv %2" : "=a"(res), "=d"(dummy) : "r"(b), "a"(dividend_l32), "d"(dividend_h32));
+
+	return res;
 }
 
 FLOAT f2F(float a) {
