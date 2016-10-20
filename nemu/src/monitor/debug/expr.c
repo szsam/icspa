@@ -248,9 +248,10 @@ int dominant_operator(int p, int q) {
 	
 	/* find the first operator that is not inside parentheses*/	
 	int ix = p;
-	while (!is_operator(tokens[ix].type) || inside_pare(ix, p, q))
+	while (ix<= q && (!is_operator(tokens[ix].type) || inside_pare(ix, p, q)) )
 		++ix;
-	assert(ix <= q);
+
+	if (ix > q) longjmp(env_buf, ESYN);
 
 	int ix_domin_oper = ix;
 
