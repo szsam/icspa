@@ -15,7 +15,7 @@ enum { EPARE = 1, EREG, ESYN };
 
 enum {
 	NOTYPE = 256, EQ, DEC, HEX, REG,
-	NEQ, AND, OR, NOT, DEREF
+	NEQ, AND, OR, NOT, DEREF, VAR
 
 	/* TODO: Add more token types */
 
@@ -45,6 +45,7 @@ static struct rule {
 	{"&&", AND},					// logic and
 	{"\\|\\|", OR},					// logic or
 	{"!", NOT},						// logic NOT
+	{"[_a-zA-Z][_0-9a-zA-Z]*", VAR} // variable
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -90,7 +91,7 @@ static bool make_token(char *e) {
 				char *substr_start = e + position;
 				int substr_len = pmatch.rm_eo;
 
-//				Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
+				Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
 				position += substr_len;
 
 				/* TODO: Now a new token is recognized with rules[i]. Add codes
@@ -112,7 +113,7 @@ static bool make_token(char *e) {
 				tokens[nr_token].type = rules[i].token_type;
 
 				switch(rules[i].token_type) {
-					case DEC: case HEX:
+					case DEC: case HEX: case VAR:
 						strncpy(tokens[nr_token].str, substr_start, substr_len);
 						tokens[nr_token].str[substr_len] = '\0';
 						break;
@@ -321,6 +322,10 @@ uint32_t eval(int p, int q) {
 			  }
 			case REG:
 			  return reg_val(tokens[p].str);
+			case VAR:
+			  {
+				return 0;
+			  }
 			default:
 			  longjmp(env_buf, ESYN);
 		}
