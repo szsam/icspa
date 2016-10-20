@@ -429,6 +429,8 @@ uint32_t expr(char *e, bool *success) {
 			case ESYN:
 				fprintf(stderr, "syntax error\n");
 				break;
+			case ESYM:
+				break;
 			default:
 				assert(0);
 		}
