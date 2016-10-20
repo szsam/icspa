@@ -234,12 +234,12 @@ static int cmd_bt(char *args) {
 
 	while (frame_ptr) {
 		printf("#%d ", num);
-		if (num++ != 0) printf("0x%08x ", pc);
-		printf("%s ", func_name(pc));
+		if (num++ != 0) printf("0x%08x in ", pc);
+		printf("%s ( ", func_name(pc));
 		for (int offset = 8; offset <=20; offset += 4) {
-			printf("%x ", swaddr_read(frame_ptr + offset, 4) );
+			printf("0x%x, ", swaddr_read(frame_ptr + offset, 4) );
 		}
-		printf("\n");
+		printf(")\n");
 
 		pc = swaddr_read(frame_ptr + 4, 4);
 		frame_ptr = swaddr_read(frame_ptr, 4);
