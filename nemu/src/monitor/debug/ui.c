@@ -229,10 +229,10 @@ static int cmd_bt(char *args) {
 	int num = 0;
 	swaddr_t pc = cpu.eip, frame_ptr = cpu.ebp;
 
-	if (nemu_state != RUNNING) {
-		printf("No stack.\n");
-		return 0;
-	}
+	//if (cpu.eip == ENTRY_START) {
+	//	printf("No stack.\n");
+	//	return 0;
+	//}
 
 	printf("Warning: The number of parameters of a function may be less than four, "
 			"however, four arguments are FORCED to be printed for each function.\n");
