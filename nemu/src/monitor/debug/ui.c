@@ -1,6 +1,7 @@
 #include "monitor/monitor.h"
 #include "monitor/expr.h"
 #include "monitor/watchpoint.h"
+#include "monitor/myelf.h"
 #include "nemu.h"
 
 #include <stdlib.h>
@@ -50,6 +51,8 @@ static int cmd_w(char *args);
 
 static int cmd_d(char *args);
 
+static int cmd_bt(char *args);
+
 static struct {
 	char *name;
 	char *description;
@@ -63,7 +66,8 @@ static struct {
 	{ "x", "Examine memory: x N EXPR", cmd_x },
 	{ "p", "Print value of expression EXPR", cmd_p },
 	{ "w", "Set an watchpoint for an expression: w EXPR", cmd_w },
-	{ "d", "Delete a watchpoint: d N", cmd_d }
+	{ "d", "Delete a watchpoint: d N", cmd_d },
+	{ "bt", "Print backtrace of all stack frames", cmd_bt }
 
 	/* TODO: Add more commands */
 
@@ -221,10 +225,31 @@ static int cmd_d(char *args) {
 	return 0;
 }
 
+static int cmd_bt(char *args) {
+	int num = 0;
+	swaddr_t pc = cpu.eip, frame_ptr = cpu.ebp;
+
+	printf("Warning: The number of parameters of a function may be less than four,"
+			"however, four arguments are FORCED to be printed for each function.\n");
+
+	while (frame_ptr) {
+		printf("#%d ", num);
+		if (num++ != 0) printf("0x%08x ", pc);
+		printf("%s ", func_name(pc));
+		for (int offset = 8; offset <=20; offset += 4) {
+			printf("%x ", swaddr_read(frame_ptr + offset, 4) );
+		}
+		printf("\n");
+
+		pc = swaddr_read(frame_ptr + 4, 4);
+		frame_ptr = swaddr_read(frame_ptr, 4);
+	}
+	return 0;
+}
+
 void ui_mainloop() {
 	while(1) {
-		char *str = rl_gets();
-		char *str_end = str + strlen(str);
+		char *str = rl_gets(); char *str_end = str + strlen(str);
 
 		/* extract the first token as the command */
 		char *cmd = strtok(str, " ");

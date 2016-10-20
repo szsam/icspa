@@ -93,3 +93,17 @@ bool symbol_addr(const char *sym, swaddr_t *addr) {
 	
 	return false;
 }
+
+char *func_name(swaddr_t pc) {
+	for (int ix = 0; ix < nr_symtab_entry; ++ix) {
+		Elf32_Sym s = symtab[ix];
+		if (ELF32_ST_TYPE(s.st_info) == STT_FUNC
+			&& pc >= s.st_value
+			&& pc < s.st_value + s.st_size )
+			return strtab + s.st_name;
+				
+	}
+	panic("function name not found");
+	return NULL;
+}
+
