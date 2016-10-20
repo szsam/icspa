@@ -81,3 +81,8 @@ void load_elf_tables(int argc, char *argv[]) {
 	fclose(fp);
 }
 
+bool symbol_addr(const char *sym, swaddr_t *addr) {
+	*addr = 888;
+
+	return true;
+}

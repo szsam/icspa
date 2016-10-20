@@ -1,11 +1,13 @@
 #include "nemu.h"
+#include "monitor/myelf.h"
+
 #include <stdlib.h>
 #include <ctype.h>
 #include <setjmp.h>
 
 jmp_buf env_buf;
 
-enum { EPARE = 1, EREG, ESYN };
+enum { EPARE = 1, EREG, ESYN, ESYM };
 
 /* We use the POSIX regex functions to process regular expressions.
  * Type 'man regex' for more information about POSIX regex functions.
@@ -325,7 +327,11 @@ uint32_t eval(int p, int q) {
 			  return reg_val(tokens[p].str);
 			case VAR:
 			  {
-				return 0;
+				swaddr_t addr;
+				if (symbol_addr(tokens[p].str, &addr))
+					return addr;
+				else
+					longjmp(env_buf, ESYM);
 			  }
 			default:
 			  longjmp(env_buf, ESYN);
