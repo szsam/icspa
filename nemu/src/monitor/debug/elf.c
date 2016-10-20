@@ -82,7 +82,14 @@ void load_elf_tables(int argc, char *argv[]) {
 }
 
 bool symbol_addr(const char *sym, swaddr_t *addr) {
-	*addr = 888;
+	for (int ix = 0; ix < nr_symtab_entry; ++ix) {
+		if (!strcmp(strtab + symtab[ix].st_name, sym)) {
+			*addr = symtab[ix].st_value;
+			return true;
+		}
+	}
 
-	return true;
+	fprintf(stderr, "No symbol %s\n", sym);
+	
+	return false;
 }
