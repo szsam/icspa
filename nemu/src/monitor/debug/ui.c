@@ -229,7 +229,7 @@ static int cmd_bt(char *args) {
 	int num = 0;
 	swaddr_t pc = cpu.eip, frame_ptr = cpu.ebp;
 
-	printf("Warning: The number of parameters of a function may be less than four,"
+	printf("Warning: The number of parameters of a function may be less than four, "
 			"however, four arguments are FORCED to be printed for each function.\n");
 
 	while (frame_ptr) {
