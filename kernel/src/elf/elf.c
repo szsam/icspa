@@ -63,7 +63,7 @@ uint32_t loader() {
 		}
 	}
 	nemu_assert(ix == 3);
-	nemu_assert(cnt == 2);
+	nemu_assert(cnt == 1);
 
 	volatile uint32_t entry = elf->e_entry;
 
