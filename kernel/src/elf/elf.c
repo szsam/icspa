@@ -44,6 +44,9 @@ uint32_t loader() {
 		/* Scan the program header table, load each segment into memory */
 		if(ph->p_type == PT_LOAD) {
 
+			nemu_assert( (ix==0 && ph->p_vaddr==0x800000) ||
+					(ix==1 && ph->p_vaddr==0x801000) ||
+					ix==2);
 			/* TODO: read the content of the segment from the ELF file 
 			 * to the memory region [VirtAddr, VirtAddr + FileSiz)
 			 */
