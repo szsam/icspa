@@ -44,14 +44,14 @@ uint32_t loader() {
 		/* Scan the program header table, load each segment into memory */
 		if(ph->p_type == PT_LOAD) {
 
-			nemu_assert( (ix==0 && ph->p_vaddr==0x800000) ||
-					(ix==1 && ph->p_vaddr==0x801000) );
-			nemu_assert( (ix==0 && ph->p_filesz==0x1ec) ||
-					(ix==1 && ph->p_filesz==0x7c) );
-			nemu_assert( (ix==0 && ph->p_memsz==0x1ec) ||
-					(ix==1 && ph->p_memsz==0xf84) );
-			nemu_assert( (ix==0 && ph->p_offset==0x0) ||
-					(ix==1 && ph->p_offset==0x1000) );
+	//		nemu_assert( (ix==0 && ph->p_vaddr==0x800000) ||
+	//				(ix==1 && ph->p_vaddr==0x801000) );
+	//		nemu_assert( (ix==0 && ph->p_filesz==0x1ec) ||
+	//				(ix==1 && ph->p_filesz==0x7c) );
+	//		nemu_assert( (ix==0 && ph->p_memsz==0x1ec) ||
+	//				(ix==1 && ph->p_memsz==0xf84) );
+	//		nemu_assert( (ix==0 && ph->p_offset==0x0) ||
+	//				(ix==1 && ph->p_offset==0x1000) );
 			/* TODO: read the content of the segment from the ELF file 
 			 * to the memory region [VirtAddr, VirtAddr + FileSiz)
 			 */
@@ -72,8 +72,8 @@ uint32_t loader() {
 #endif
 		}
 	}
-	nemu_assert(ix == 3);
-	nemu_assert(cnt == 2);
+	//nemu_assert(ix == 3);
+	//nemu_assert(cnt == 2);
 
 	volatile uint32_t entry = elf->e_entry;
 
