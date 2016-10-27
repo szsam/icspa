@@ -50,6 +50,8 @@ uint32_t loader() {
 					(ix==1 && ph->p_filesz==0x7c) );
 			nemu_assert( (ix==0 && ph->p_memsz==0x1ec) ||
 					(ix==1 && ph->p_memsz==0xf84) );
+			nemu_assert( (ix==0 && ph->p_offset==0x0) ||
+					(ix==1 && ph->p_offset==0x1000) );
 			/* TODO: read the content of the segment from the ELF file 
 			 * to the memory region [VirtAddr, VirtAddr + FileSiz)
 			 */
