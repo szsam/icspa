@@ -38,7 +38,9 @@ uint32_t loader() {
 	/* Load each program segment */
 	// panic("please implement me");
 	ph = (Elf32_Phdr *)(buf + elf->e_phoff);
-	for(int ix = 0; ix < elf->e_phnum; ++ix, ++ph) {
+	int ix;
+	int cnt = 0;
+	for(ix = 0; ix < elf->e_phnum; ++ix, ++ph) {
 		/* Scan the program header table, load each segment into memory */
 		if(ph->p_type == PT_LOAD) {
 
@@ -51,7 +53,7 @@ uint32_t loader() {
 			 * [VirtAddr + FileSiz, VirtAddr + MemSiz)
 			 */
 			memset((void *)(ph->p_vaddr) + ph->p_filesz, 0, ph->p_memsz-ph->p_filesz);
-
+			cnt++;
 #ifdef IA32_PAGE
 			/* Record the program break for future use. */
 			extern uint32_t cur_brk, max_brk;
@@ -60,6 +62,8 @@ uint32_t loader() {
 #endif
 		}
 	}
+	nemu_assert(ix == 3);
+	nemu_assert(cnt == 2);
 
 	volatile uint32_t entry = elf->e_entry;
 

@@ -22,6 +22,5 @@ int main() {
 
 	nemu_assert(loop == NR_DATA * NR_DATA);
 
-	set_bp();
 	return 0;
 }
