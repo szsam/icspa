@@ -45,7 +45,7 @@ uint32_t loader() {
 		if(ph->p_type == PT_LOAD) {
 
 			nemu_assert( (ix==0 && ph->p_vaddr==0x800000) ||
-					(ix==1 && ph->p_vaddr==0x801000) ||
+					(ix==1 && ph->p_vaddr==0x801001) ||
 					ix==2);
 			/* TODO: read the content of the segment from the ELF file 
 			 * to the memory region [VirtAddr, VirtAddr + FileSiz)
@@ -58,7 +58,7 @@ uint32_t loader() {
 			if (ph->p_memsz > ph->p_filesz)
 				memset((void *)(ph->p_vaddr) + ph->p_filesz, 0, ph->p_memsz-ph->p_filesz);
 			cnt++;
-			set_bp();
+			// set_bp();
 #ifdef IA32_PAGE
 			/* Record the program break for future use. */
 			extern uint32_t cur_brk, max_brk;
