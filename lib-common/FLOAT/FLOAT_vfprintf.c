@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <sys/mman.h>
+// #include <sys/mman.h>
 #include "FLOAT.h"
 
 extern char _vfprintf_internal;
@@ -84,8 +84,8 @@ static void modify_vfprintf() {
 #endif
 		void *p = (void *)&_vfprintf_internal + 0x306;	// address of 'call _fpmaxtostr'
 
-		unsigned add = (unsigned)p - 100;
-		mprotect((void *)(add & 0xfffff000), 4096*2, PROT_READ | PROT_WRITE | PROT_EXEC);
+//		unsigned add = (unsigned)p - 100;
+//		mprotect((void *)(add & 0xfffff000), 4096*2, PROT_READ | PROT_WRITE | PROT_EXEC);
 
 		*(uint32_t *)(p+1) += (void *)&format_FLOAT - (void *)&_fpmaxtostr;
 
