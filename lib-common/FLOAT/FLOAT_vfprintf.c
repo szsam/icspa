@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <sys/mman.h>
 #include "FLOAT.h"
 
 extern char _vfprintf_internal;
@@ -15,8 +16,32 @@ __attribute__((used)) static int format_FLOAT(FILE *stream, FLOAT f) {
 	 *         0x00013333    "1.199996"
 	 */
 
+	union {
+		struct {
+			int frac : 16;
+			int	integer : 15;
+			int	sgn : 1;
+		};
+		FLOAT f;
+	}un;
+
 	char buf[80];
-	int len = sprintf(buf, "0x%08x", f);
+	// int len = sprintf(buf, "0x%08x", f);
+	int len = 0;
+	
+	if (f < 0) {
+		len = sprintf(buf, "-");
+		un.f = -f;
+	}
+	else un.f = f;
+
+	//  un.f is non-negative
+	len += sprintf(buf + len, "%d", un.integer);
+
+	un.integer = 0;
+	un.f = F_mul_int(un.f, 1e6i);
+	len += sprintf(buf + len, ".%6d", un.integer);
+	
 	return __stdio_fwrite(buf, len, stream);
 }
 
@@ -63,6 +88,18 @@ static void modify_vfprintf() {
 		return 0;
 	} else if (ppfs->conv_num <= CONV_S) {  /* wide char or string */
 #endif
+		void *p = (void *)&_vfprintf_internal + 0x306;	// address of 'call _fpmaxtostr'
+
+		unsigned add = (unsigned)p - 100;
+		mprotect((void *)(add & 0xfffff000), 4096*2, PROT_READ | PROT_WRITE | PROT_EXEC);
+
+		*(uint32_t *)(p+1) += (void *)&format_FLOAT - (void *)&_fpmaxtostr;
+
+		*(uint16_t *)(p-10) = 0x32ff;	// ff 32 push (%edx)
+		*(uint8_t *)(p-8) = 0x90;		// nop
+
+		// modify 'sub $0xc,%esp' to 'sub $0x8,%esp' 
+		*(uint8_t *)(p-11) = 0x08;		
 
 }
 

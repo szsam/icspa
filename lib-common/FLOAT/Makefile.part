@@ -1,6 +1,7 @@
 # This file will be included by the Makefile under the project directory.
 
-FLOAT_CFLAGS_EXTRA := -c -m32 -O2 -fno-builtin -march=i386 -D_FORTIFY_SOURCE=0
+FLOAT_CFLAGS_EXTRA := -c -m32 -O2 -fno-builtin -march=i386 -g \
+	-fno-stack-protector -U_FORTIFY_SOURCE \
 
 FLOAT_O := $(FLOAT:.a=.o)
 FLOAT_VFPRINTF_O := $(dir $(FLOAT))FLOAT_vfprintf.o
