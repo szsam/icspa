@@ -5,6 +5,7 @@
 
 extern char _vfprintf_internal;
 extern char _fpmaxtostr;
+extern char _ppfs_setargs;
 extern int __stdio_fwrite(char *buf, int len, FILE *stream);
 
 __attribute__((used)) static int format_FLOAT(FILE *stream, FLOAT f) {
@@ -16,31 +17,24 @@ __attribute__((used)) static int format_FLOAT(FILE *stream, FLOAT f) {
 	 *         0x00013333    "1.199996"
 	 */
 
-	union {
-		struct {
-			int frac : 16;
-			int	integer : 15;
-			int	sgn : 1;
-		};
-		FLOAT f;
-	}un;
-
 	char buf[80];
 	// int len = sprintf(buf, "0x%08x", f);
 	int len = 0;
 	
 	if (f < 0) {
 		len = sprintf(buf, "-");
-		un.f = -f;
+		f = -f;
 	}
-	else un.f = f;
 
-	//  un.f is non-negative
-	len += sprintf(buf + len, "%d", un.integer);
+	//  f is now non-negative
+	len += sprintf(buf + len, "%d", f >> 16);
 
-	un.integer = 0;
-	un.f = F_mul_int(un.f, 1e6i);
-	len += sprintf(buf + len, ".%6d", un.integer);
+	f &= 0xffff;
+
+	// f = F_mul_int(f, 1000000); This is buggy!
+	// Pay close attention to overflow!!!
+	f = ((long long)f * 1000000) >> 16;
+	len += sprintf(buf + len, ".%06d", f);
 	
 	return __stdio_fwrite(buf, len, stream);
 }
@@ -100,6 +94,10 @@ static void modify_vfprintf() {
 
 		// modify 'sub $0xc,%esp' to 'sub $0x8,%esp' 
 		*(uint8_t *)(p-11) = 0x08;		
+
+		// clear x87 float instruction
+		*(uint16_t *)(p-0x1e) = 0x9090;
+		*(uint16_t *)(p-0x22) = 0x9090;
 
 }
 
@@ -202,6 +200,9 @@ static void modify_ppfs_setargs() {
 	}
 #endif
 
+	void *p = &_ppfs_setargs;
+	*(uint16_t *)(p+0x71) = 0x30eb;	// jmp
+	*(uint32_t *)(p+0x73) = 0x90;	// nop
 }
 
 void init_FLOAT_vfprintf() {
