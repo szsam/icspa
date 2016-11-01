@@ -53,7 +53,7 @@ clean: clean-cpp
 
 ##### some convinient rules #####
 
-USERPROG := obj/testcase/qsort-xmh
+USERPROG := obj/testcase/prime_pal
 # ENTRY := $(USERPROG)
 ENTRY := $(kernel_BIN)
 
