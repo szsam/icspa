@@ -33,7 +33,7 @@ bool isPrime(int n)
 int main()
 {
 	int a, b;
-	a = 5; b = 1e5;
+	a = 5; b = 1e3;
 
 	int ans_ix = 0;
 
