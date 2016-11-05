@@ -43,13 +43,14 @@ void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_t *data
 		// copy a block from main memory to cache
 		selected_set[lnIx].valid = 1;
 		selected_set[lnIx].tag = madd.tag;
+		hwaddr_t begin_addr = addr & 0xffffffc0;
 		for (size_t i=0; i<BLOCK_SIZE/sizeof(uint32_t); i++) {
-			uint32_t temp = dram_read(addr+4*i, 4);			
+			uint32_t temp = dram_read(begin_addr+4*i, 4);			
 			memcpy(selected_set[lnIx].block + 4*i, &temp, 4);
 		}
 	}
 	// read data from SRAM
-	memcpy(data, selected_set[lnIx].block, len);
+	memcpy(data, selected_set[lnIx].block + madd.block_offset, len);
 }
 
 uint32_t cache_l1_read(Cache_level1 * const this, hwaddr_t addr, size_t len)
