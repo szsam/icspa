@@ -20,6 +20,8 @@ void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_t *data
 	MEM_ADDR madd;
 	madd.addr = addr;
 
+	assert(madd.block_offset + len <= BLOCK_SIZE);
+
 	// set selection
 	Line *selected_set = this->sets[madd.set_index];
 
@@ -30,11 +32,7 @@ void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_t *data
 		++lnIx;
 	}
 
-	if (lnIx < LINES_PER_SET) { // hit!
-		assert(madd.block_offset + len <= BLOCK_SIZE);
-		memcpy(data, selected_set[lnIx].block, len);
-	}
-	else { // miss
+	if (lnIx == LINES_PER_SET) { // miss!
 		lnIx = 0;
 		while (lnIx < LINES_PER_SET && selected_set[lnIx].valid)
 			++lnIx;
@@ -50,7 +48,8 @@ void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_t *data
 			memcpy(selected_set[lnIx].block + 4*i, &temp, 4);
 		}
 	}
-	
+	// read data from SRAM
+	memcpy(data, selected_set[lnIx].block, len);
 }
 
 uint32_t cache_l1_read(Cache_level1 * const this, hwaddr_t addr, size_t len)
