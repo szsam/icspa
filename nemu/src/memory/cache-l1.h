@@ -13,7 +13,7 @@ void dram_write(hwaddr_t, size_t, uint32_t);
 #include "cache-template.h"
 
 // define a Cache object
-Cache_level1 cache_l1;
+// Cache_level1 cache_l1;
 
 void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_t *data, size_t len)
 {
@@ -83,6 +83,13 @@ void cache_l1_write(Cache_level1 * const this, hwaddr_t addr, size_t len, uint32
 }
 
 // install methods
-//cache_l1.read = cache_l1_read;
-//cache_l1.write = cache_l1_write;
-//cache_l1.read_internal = cache_read_internal;
+// cache_l1.read = cache_l1_read;
+// cache_l1.write = cache_l1_write;
+// cache_l1.read_internal = cache_read_internal;
+
+Cache_level1 cache_l1 =
+{
+	 .read = cache_l1_read, 
+	 .write = cache_l1_write, 
+	 .read_internal = cache_read_internal
+};
