@@ -2,7 +2,7 @@
 
 .PHONY: nemu entry testcase kernel run gdb test submit clean count
 
-CC := gcc
+CC := clang
 LD := ld
 CFLAGS := -MMD -Wall -Werror -c
 
