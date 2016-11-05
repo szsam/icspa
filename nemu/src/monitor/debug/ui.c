@@ -165,7 +165,7 @@ static int cmd_x(char *args) {
 
 	}
 
-	printf("read from DRAM:\n");
+	printf("\nread from DRAM:\n");
 	for (int i = 0; i < num; i++) {
 		uint32_t data = dram_read(addr, 4);
 
