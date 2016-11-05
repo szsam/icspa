@@ -150,8 +150,9 @@ static int cmd_x(char *args) {
 
 	if (!success) return 0;
 
+	swaddr_t addr_temp = addr;
 	for (int i = 0; i < num; i++) {
-		uint32_t data = swaddr_read(addr, 4);
+		uint32_t data = swaddr_read(addr_temp, 4);
 
 		if (i % 4 == 0)
 		{
@@ -161,7 +162,7 @@ static int cmd_x(char *args) {
 		if ((i + 1) % 4 == 0)
 			printf("\n");
 
-		addr += 4;
+		addr_temp += 4;
 
 	}
 
