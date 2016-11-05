@@ -78,7 +78,7 @@ uint32_t cache_l1_read(Cache_level1 * const this, hwaddr_t addr, size_t len)
 
 void cache_l1_write(Cache_level1 * const this, hwaddr_t addr, size_t len, uint32_t data)
 {
-	// write through, no write-allocate
+	// write through, not write allocate
 	dram_write(addr, len, data);
 }
 
