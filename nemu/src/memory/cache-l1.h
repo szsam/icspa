@@ -93,3 +93,10 @@ Cache_level1 cache_l1 =
 	 .write = cache_l1_write, 
 	 .read_internal = cache_read_internal
 };
+
+void init_cache() {
+	for (int setIx = 0; setIx < SET_SIZE; ++setIx)
+		for (int lnIx = 0; lnIx < LINES_PER_SET; ++lnIx)
+			cache_l1.sets[setIx][lnIx].valid = 0;
+
+}
