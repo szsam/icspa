@@ -28,6 +28,7 @@ typedef struct CACHE_CLASS_NAME {
 	 void (*write)(struct CACHE_CLASS_NAME * const this, hwaddr_t, size_t, uint32_t);
 	 // private:
 	 void (*read_internal)(struct CACHE_CLASS_NAME * const this, hwaddr_t, uint8_t *, size_t);
+	 void (*write_internal)(struct CACHE_CLASS_NAME * const this, hwaddr_t, size_t, uint32_t);
 }CACHE_CLASS_NAME;
 
 

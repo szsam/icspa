@@ -79,19 +79,44 @@ uint32_t cache_l1_read(Cache_level1 * const this, hwaddr_t addr, size_t len)
 void cache_l1_write(Cache_level1 * const this, hwaddr_t addr, size_t len, uint32_t data)
 {
 	// write through, not write allocate
-	dram_write(addr, len, data);
+	this->write_internal(this, addr, len, data);
 }
 
-// install methods
-// cache_l1.read = cache_l1_read;
-// cache_l1.write = cache_l1_write;
-// cache_l1.read_internal = cache_read_internal;
+
+ void cache_write_internal(struct Cache_level1 * const this, 
+		 hwaddr_t addr, size_t len, uint32_t data) {
+
+	MEM_ADDR madd;
+	madd.addr = addr;
+
+	assert(madd.block_offset + len <= BLOCK_SIZE);
+
+	// set selection
+	Line *selected_set = this->sets[madd.set_index];
+
+	// line matching
+	int lnIx = 0;
+	while ( lnIx < LINES_PER_SET &&
+			 !(selected_set[lnIx].valid && selected_set[lnIx].tag == madd.tag)) {
+		++lnIx;
+	}
+	
+	if (lnIx < LINES_PER_SET) {
+		// hit
+		memcpy(selected_set[lnIx].block+madd.block_offset, &data, len);
+	}
+
+	// write through; in case of miss, no write allocate
+	dram_write(addr, len, data);
+ }
+
 
 Cache_level1 cache_l1 =
-{
+{	// install methods
 	 .read = cache_l1_read, 
 	 .write = cache_l1_write, 
-	 .read_internal = cache_read_internal
+	 .read_internal = cache_read_internal,
+	 .write_internal = cache_write_internal
 };
 
 void init_cache() {
