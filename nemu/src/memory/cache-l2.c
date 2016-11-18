@@ -30,6 +30,19 @@ static void cache_read_internal(Cache_level2 * const this, hwaddr_t addr, uint8_
 		if (lnIx == LINES_PER_SET) {
 			// the cache set is full, random replacement algorithm is used
 			lnIx = rand() % LINES_PER_SET;
+			// write back if necessary
+			if (selected_set[lnIx].dirty) {
+				MEM_ADDR evict_addr;
+				evict_addr.tag = selected_set[lnIx].tag;
+				evict_addr.set_index = madd.set_index;
+				evict_addr.block_offset = 0;
+				for (size_t i=0; i<BLOCK_SIZE/4; i++) {
+					uint32_t temp;
+					memcpy(&temp, selected_set[lnIx].block + 4*i, 4);
+					dram_write(evict_addr.addr, 4, temp);
+					evict_addr.block_offset += 4;
+				}
+			}	
 		}
 		// copy a block from main memory to cache
 		selected_set[lnIx].valid = 1;
@@ -90,15 +103,14 @@ static void cache_write_internal(struct Cache_level2 * const this,
 	if (lnIx < LINES_PER_SET) {
 		// hit
 		memcpy(selected_set[lnIx].block+madd.block_offset, &data, len);
+		selected_set[lnIx].dirty = 1;
 	}
-
-	// write through; in case of miss, no write allocate
-	dram_write(addr, len, data);
+/*TODO*/
  }
 
 static void cache_l2_write(Cache_level2 * const this, hwaddr_t addr, size_t len, uint32_t data)
 {
-	// write through, not write allocate
+	// write back, write allocate
 	cache_write_internal(this, addr, len, data);
 }
 
@@ -109,7 +121,7 @@ static void init_cache(struct Cache_level2 * const this) {
 
 }
 
-// define an object of Cache_level1
+// define an object of Cache_level2
 // designated initialization, introduced in C11
 Cache_level2 cache_l2 =
 {	// install methods

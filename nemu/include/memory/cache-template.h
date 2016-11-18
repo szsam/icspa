@@ -18,12 +18,12 @@ typedef struct {
 		uint32_t tag : TAG_WIDTH;
 	};
 	uint8_t block[BLOCK_SIZE];
-}Line;
+}concat3(Line, _, CACHE_CLASS_NAME);
 
 /* define a "class" Cache */
 typedef struct CACHE_CLASS_NAME {
 	/* define "attributes" members */
-	Line sets[SET_SIZE][LINES_PER_SET];
+	concat3(Line, _, CACHE_CLASS_NAME) sets[SET_SIZE][LINES_PER_SET];
 
 	 /* define "methods" */
 	 // public :
@@ -43,5 +43,7 @@ typedef union {
 		uint32_t tag : TAG_WIDTH;
 	};
 	hwaddr_t addr;
-}MEM_ADDR;
+}concat3(MEM_ADDR, _, CACHE_CLASS_NAME);
 
+#define Line concat3(Line, _, CACHE_CLASS_NAME)
+#define MEM_ADDR concat3(MEM_ADDR, _, CACHE_CLASS_NAME)

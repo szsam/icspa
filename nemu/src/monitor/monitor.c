@@ -15,6 +15,10 @@ void init_ddr3();
 extern Cache_level1 cache_l1;
 #include "memory/cache-template-end.h"
 
+#include "memory/cache-l2.h"
+extern Cache_level2 cache_l2;
+#include "memory/cache-template-end.h"
+
 FILE *log_fp = NULL;
 
 static void init_log() {
@@ -99,4 +103,5 @@ void restart() {
 
 	/* Initialize Cache */
 	cache_l1.init(&cache_l1);
+	cache_l2.init(&cache_l2);
 }
