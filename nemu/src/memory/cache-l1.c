@@ -54,6 +54,7 @@ uint32_t cache_l1_read(Cache_level1 * const this, hwaddr_t addr, size_t len)
 	}
 	else {
 		// data cross the boundary of cache block
+		Log("data cross the boundary of cache block");
 		int len1 = BLOCK_SIZE - madd.block_offset;	
 		cache_read_internal(this, addr, temp, len1);
 		cache_read_internal(this, addr+len1, temp+len1, len-len1);
@@ -108,6 +109,7 @@ void init_cache(struct Cache_level1 * const this) {
 
 }
 
+// define an object of Cache_level1
 // designated initialization, introduced in C11
 Cache_level1 cache_l1 =
 {	// install methods
