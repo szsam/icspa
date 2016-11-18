@@ -10,7 +10,10 @@ void load_elf_tables(int, char *[]);
 void init_regex();
 void init_wp_pool();
 void init_ddr3();
-void init_cache();
+
+#include "memory/cache-l1.h"
+extern Cache_level1 cache_l1;
+#include "memory/cache-template-end.h"
 
 FILE *log_fp = NULL;
 
@@ -95,5 +98,5 @@ void restart() {
 	init_ddr3();
 
 	/* Initialize Cache */
-	init_cache();
+	cache_l1.init(&cache_l1);
 }

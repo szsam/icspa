@@ -1,7 +1,7 @@
 #include "common.h"
 
-#include "cache-l1.h"
-#include "cache-template-end.h"
+#include "memory/cache-l1.h"
+#include "memory/cache-template-end.h"
 
 extern Cache_level1 cache_l1;
 

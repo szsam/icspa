@@ -4,7 +4,7 @@
 uint32_t dram_read(hwaddr_t, size_t);
 void dram_write(hwaddr_t, size_t, uint32_t);
 
-#include "cache-l1.h"
+#include "memory/cache-l1.h"
 
 void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_t *data, size_t len)
 {
@@ -50,13 +50,13 @@ uint32_t cache_l1_read(Cache_level1 * const this, hwaddr_t addr, size_t len)
 	madd.addr = addr;
 	uint8_t temp[4];
 	if (madd.block_offset + len <= BLOCK_SIZE) {
-		this->read_internal(this, addr, temp, len);
+		cache_read_internal(this, addr, temp, len);
 	}
 	else {
 		// data cross the boundary of cache block
 		int len1 = BLOCK_SIZE - madd.block_offset;	
-		this->read_internal(this, addr, temp, len1);
-		this->read_internal(this, addr+len1, temp+len1, len-len1);
+		cache_read_internal(this, addr, temp, len1);
+		cache_read_internal(this, addr+len1, temp+len1, len-len1);
 	}
 	// return unalign_rw(temp, len);
 	switch (len) {
@@ -65,12 +65,6 @@ uint32_t cache_l1_read(Cache_level1 * const this, hwaddr_t addr, size_t len)
 		case 4: return unalign_rw(temp, 4);
 		default: assert(0);
 	}
-}
-
-void cache_l1_write(Cache_level1 * const this, hwaddr_t addr, size_t len, uint32_t data)
-{
-	// write through, not write allocate
-	this->write_internal(this, addr, len, data);
 }
 
 
@@ -101,20 +95,26 @@ void cache_l1_write(Cache_level1 * const this, hwaddr_t addr, size_t len, uint32
 	dram_write(addr, len, data);
  }
 
+void cache_l1_write(Cache_level1 * const this, hwaddr_t addr, size_t len, uint32_t data)
+{
+	// write through, not write allocate
+	cache_write_internal(this, addr, len, data);
+}
 
+void init_cache(struct Cache_level1 * const this) {
+	for (int setIx = 0; setIx < SET_SIZE; ++setIx)
+		for (int lnIx = 0; lnIx < LINES_PER_SET; ++lnIx)
+			this->sets[setIx][lnIx].valid = 0;
+
+}
+
+// designated initialization, introduced in C11
 Cache_level1 cache_l1 =
 {	// install methods
 	 .read = cache_l1_read, 
 	 .write = cache_l1_write, 
-	 .read_internal = cache_read_internal,
-	 .write_internal = cache_write_internal
+	 .init = init_cache
 };
 
-void init_cache() {
-	for (int setIx = 0; setIx < SET_SIZE; ++setIx)
-		for (int lnIx = 0; lnIx < LINES_PER_SET; ++lnIx)
-			cache_l1.sets[setIx][lnIx].valid = 0;
 
-}
-
-#include "cache-template-end.h"
+#include "memory/cache-template-end.h"
