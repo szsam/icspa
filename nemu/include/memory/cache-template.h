@@ -12,6 +12,9 @@
 typedef struct {
 	struct {
 		uint32_t valid : 1;
+#ifdef WRITE_BACK
+		uint32_t dirty : 1;
+#endif
 		uint32_t tag : TAG_WIDTH;
 	};
 	uint8_t block[BLOCK_SIZE];

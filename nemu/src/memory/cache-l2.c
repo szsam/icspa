@@ -4,9 +4,9 @@
 uint32_t dram_read(hwaddr_t, size_t);
 void dram_write(hwaddr_t, size_t, uint32_t);
 
-#include "memory/cache-l1.h"
+#include "memory/cache-l2.h"
 
-static void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_t *data, size_t len)
+static void cache_read_internal(Cache_level2 * const this, hwaddr_t addr, uint8_t *data, size_t len)
 {
 	MEM_ADDR madd;
 	madd.addr = addr;
@@ -44,7 +44,7 @@ static void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_
 	memcpy(data, selected_set[lnIx].block + madd.block_offset, len);
 }
 
-static uint32_t cache_l1_read(Cache_level1 * const this, hwaddr_t addr, size_t len)
+static uint32_t cache_l2_read(Cache_level2 * const this, hwaddr_t addr, size_t len)
 {
 	MEM_ADDR madd;
 	madd.addr = addr;
@@ -69,7 +69,7 @@ static uint32_t cache_l1_read(Cache_level1 * const this, hwaddr_t addr, size_t l
 }
 
 
-static void cache_write_internal(struct Cache_level1 * const this, 
+static void cache_write_internal(struct Cache_level2 * const this, 
 		 hwaddr_t addr, size_t len, uint32_t data) {
 
 	MEM_ADDR madd;
@@ -96,13 +96,13 @@ static void cache_write_internal(struct Cache_level1 * const this,
 	dram_write(addr, len, data);
  }
 
-static void cache_l1_write(Cache_level1 * const this, hwaddr_t addr, size_t len, uint32_t data)
+static void cache_l2_write(Cache_level2 * const this, hwaddr_t addr, size_t len, uint32_t data)
 {
 	// write through, not write allocate
 	cache_write_internal(this, addr, len, data);
 }
 
-static void init_cache(struct Cache_level1 * const this) {
+static void init_cache(struct Cache_level2 * const this) {
 	for (int setIx = 0; setIx < SET_SIZE; ++setIx)
 		for (int lnIx = 0; lnIx < LINES_PER_SET; ++lnIx)
 			this->sets[setIx][lnIx].valid = 0;
@@ -111,10 +111,10 @@ static void init_cache(struct Cache_level1 * const this) {
 
 // define an object of Cache_level1
 // designated initialization, introduced in C11
-Cache_level1 cache_l1 =
+Cache_level2 cache_l2 =
 {	// install methods
-	 .read = cache_l1_read, 
-	 .write = cache_l1_write, 
+	 .read = cache_l2_read, 
+	 .write = cache_l2_write, 
 	 .init = init_cache
 };
 

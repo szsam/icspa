@@ -8,3 +8,7 @@
 
 #undef BLOCK_SIZE
 #undef SET_SIZE
+
+#ifdef WRITE_BACK
+ #undef WRITE_BACK
+#endif
