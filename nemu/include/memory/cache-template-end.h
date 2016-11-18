@@ -12,3 +12,6 @@
 #ifdef WRITE_BACK
  #undef WRITE_BACK
 #endif
+
+#undef Line
+#undef MEM_ADDR
