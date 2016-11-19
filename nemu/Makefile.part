@@ -1,4 +1,4 @@
-nemu_CFLAGS_EXTRA := -ggdb3 -O2 -std=c11 -Wstrict-aliasing=2
+nemu_CFLAGS_EXTRA := -ggdb3 -O2 -std=c11 -fno-strict-aliasing
 $(eval $(call make_common_rules,nemu,$(nemu_CFLAGS_EXTRA)))
 
 nemu_LDFLAGS := -lreadline
