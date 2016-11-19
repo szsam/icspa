@@ -10,6 +10,16 @@ extern Cache_level2 cache_l2;
 
 #include "memory/cache-l1.h"
 
+// Line Matching
+static int line_matching(Line *selected_set, MEM_ADDR madd) {
+	int lnIx = 0;
+	while ( lnIx < LINES_PER_SET &&
+			 !(selected_set[lnIx].valid && selected_set[lnIx].tag == madd.tag)) {
+		++lnIx;
+	}
+	return lnIx;
+}
+
 static void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_t *data, size_t len)
 {
 	MEM_ADDR madd;
@@ -21,11 +31,7 @@ static void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_
 	Line *selected_set = this->sets[madd.set_index];
 
 	// line matching
-	int lnIx = 0;
-	while ( lnIx < LINES_PER_SET &&
-			 !(selected_set[lnIx].valid && selected_set[lnIx].tag == madd.tag)) {
-		++lnIx;
-	}
+	int lnIx = line_matching(selected_set, madd);
 
 	if (lnIx == LINES_PER_SET) { // miss!
 		lnIx = 0;
@@ -85,11 +91,7 @@ static void cache_write_internal(struct Cache_level1 * const this,
 	Line *selected_set = this->sets[madd.set_index];
 
 	// line matching
-	int lnIx = 0;
-	while ( lnIx < LINES_PER_SET &&
-			 !(selected_set[lnIx].valid && selected_set[lnIx].tag == madd.tag)) {
-		++lnIx;
-	}
+	int lnIx = line_matching(selected_set, madd);
 	
 	if (lnIx < LINES_PER_SET) {
 		// hit
