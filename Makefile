@@ -4,8 +4,8 @@
 
 CC := gcc
 LD := ld
-CFLAGS := -MMD -Wall -Werror -c
-#CFLAGS := -MMD -Wall -c
+#CFLAGS := -MMD -Wall -Werror -c
+CFLAGS := -MMD -Wall -c
 
 LIB_COMMON_DIR := lib-common
 LIBC_INC_DIR := $(LIB_COMMON_DIR)/uclibc/include
