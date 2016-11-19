@@ -286,6 +286,8 @@ static int cmd_cache(char *args) {
 	printf("L2 cache hit: %u times\n", c2_hit);	
 	printf("L2 cache miss: %u times\n", c2_miss);	
 	printf("L2 cache hit rate: %f%%\n", 100.0 * c2_hit / (c2_hit + c2_miss));
+	uint64_t sim_clk = c1_hit * 2 + c2_hit * 10 + c2_miss * 100;
+	printf("simulated clock: %llu cycles\n", sim_clk);
 	return 0;
 }
 
