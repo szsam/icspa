@@ -6,6 +6,48 @@ void dram_write(hwaddr_t, size_t, uint32_t);
 
 #include "memory/cache-l2.h"
 
+// Line Matching
+static int line_matching(Line *selected_set, MEM_ADDR madd) {
+	int lnIx = 0;
+	while ( lnIx < LINES_PER_SET &&
+			 !(selected_set[lnIx].valid && selected_set[lnIx].tag == madd.tag)) {
+		++lnIx;
+	}
+	return lnIx;
+}
+
+static int handle_miss(Line *selected_set, MEM_ADDR madd) {
+	int lnIx = 0;
+	while (lnIx < LINES_PER_SET && selected_set[lnIx].valid)
+		++lnIx;
+	if (lnIx == LINES_PER_SET) {
+		// the cache set is full, random replacement algorithm is used
+		lnIx = rand() % LINES_PER_SET;
+		// write back if necessary
+		if (selected_set[lnIx].dirty) {
+			MEM_ADDR evict_addr;
+			evict_addr.tag = selected_set[lnIx].tag;
+			evict_addr.set_index = madd.set_index;
+			evict_addr.block_offset = 0;
+			for (size_t i=0; i<BLOCK_SIZE/4; i++) {
+				uint32_t temp;
+				memcpy(&temp, selected_set[lnIx].block + 4*i, 4);
+				dram_write(evict_addr.addr, 4, temp);
+				evict_addr.block_offset += 4;
+			}
+		}	
+	}
+	// copy a block from main memory to cache
+	selected_set[lnIx].valid = 1;
+	selected_set[lnIx].tag = madd.tag;
+	hwaddr_t begin_addr = madd.addr & 0xffffffc0;
+	for (size_t i=0; i<BLOCK_SIZE/sizeof(uint32_t); i++) {
+		uint32_t temp = dram_read(begin_addr+4*i, 4);			
+		memcpy(selected_set[lnIx].block + 4*i, &temp, 4);
+	}
+	return lnIx;
+}
+
 static void cache_read_internal(Cache_level2 * const this, hwaddr_t addr, uint8_t *data, size_t len)
 {
 	MEM_ADDR madd;
@@ -17,41 +59,10 @@ static void cache_read_internal(Cache_level2 * const this, hwaddr_t addr, uint8_
 	Line *selected_set = this->sets[madd.set_index];
 
 	// line matching
-	int lnIx = 0;
-	while ( lnIx < LINES_PER_SET &&
-			 !(selected_set[lnIx].valid && selected_set[lnIx].tag == madd.tag)) {
-		++lnIx;
-	}
+	int lnIx = line_matching(selected_set, madd);
 
 	if (lnIx == LINES_PER_SET) { // miss!
-		lnIx = 0;
-		while (lnIx < LINES_PER_SET && selected_set[lnIx].valid)
-			++lnIx;
-		if (lnIx == LINES_PER_SET) {
-			// the cache set is full, random replacement algorithm is used
-			lnIx = rand() % LINES_PER_SET;
-			// write back if necessary
-			if (selected_set[lnIx].dirty) {
-				MEM_ADDR evict_addr;
-				evict_addr.tag = selected_set[lnIx].tag;
-				evict_addr.set_index = madd.set_index;
-				evict_addr.block_offset = 0;
-				for (size_t i=0; i<BLOCK_SIZE/4; i++) {
-					uint32_t temp;
-					memcpy(&temp, selected_set[lnIx].block + 4*i, 4);
-					dram_write(evict_addr.addr, 4, temp);
-					evict_addr.block_offset += 4;
-				}
-			}	
-		}
-		// copy a block from main memory to cache
-		selected_set[lnIx].valid = 1;
-		selected_set[lnIx].tag = madd.tag;
-		hwaddr_t begin_addr = addr & 0xffffffc0;
-		for (size_t i=0; i<BLOCK_SIZE/sizeof(uint32_t); i++) {
-			uint32_t temp = dram_read(begin_addr+4*i, 4);			
-			memcpy(selected_set[lnIx].block + 4*i, &temp, 4);
-		}
+		lnIx = handle_miss(selected_set, madd);
 	}
 	// read data from SRAM
 	memcpy(data, selected_set[lnIx].block + madd.block_offset, len);
@@ -94,18 +105,16 @@ static void cache_write_internal(struct Cache_level2 * const this,
 	Line *selected_set = this->sets[madd.set_index];
 
 	// line matching
-	int lnIx = 0;
-	while ( lnIx < LINES_PER_SET &&
-			 !(selected_set[lnIx].valid && selected_set[lnIx].tag == madd.tag)) {
-		++lnIx;
-	}
+	int lnIx = line_matching(selected_set, madd);
 	
-	if (lnIx < LINES_PER_SET) {
-		// hit
-		memcpy(selected_set[lnIx].block+madd.block_offset, &data, len);
-		selected_set[lnIx].dirty = 1;
+	// write miss, write allocate
+	if (lnIx == LINES_PER_SET) {
+		lnIx = handle_miss(selected_set, madd);
 	}
-/*TODO*/
+
+	// update cache, but do NOT update main memory immediately
+	memcpy(selected_set[lnIx].block + madd.block_offset, &data, len);
+	selected_set[lnIx].dirty = 1;
  }
 
 static void cache_l2_write(Cache_level2 * const this, hwaddr_t addr, size_t len, uint32_t data)

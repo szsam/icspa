@@ -1,8 +1,12 @@
 #include <stdlib.h>
 #include "common.h"
 
-uint32_t dram_read(hwaddr_t, size_t);
-void dram_write(hwaddr_t, size_t, uint32_t);
+// uint32_t dram_read(hwaddr_t, size_t);
+// void dram_write(hwaddr_t, size_t, uint32_t);
+
+#include "memory/cache-l2.h"
+#include "memory/cache-template-end.h"
+extern Cache_level2 cache_l2;
 
 #include "memory/cache-l1.h"
 
@@ -36,7 +40,7 @@ static void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_
 		selected_set[lnIx].tag = madd.tag;
 		hwaddr_t begin_addr = addr & 0xffffffc0;
 		for (size_t i=0; i<BLOCK_SIZE/sizeof(uint32_t); i++) {
-			uint32_t temp = dram_read(begin_addr+4*i, 4);			
+			uint32_t temp = cache_l2.read(&cache_l2, begin_addr+4*i, 4);			
 			memcpy(selected_set[lnIx].block + 4*i, &temp, 4);
 		}
 	}
@@ -93,7 +97,7 @@ static void cache_write_internal(struct Cache_level1 * const this,
 	}
 
 	// write through; in case of miss, no write allocate
-	dram_write(addr, len, data);
+	cache_l2.write(&cache_l2, addr, len, data);
  }
 
 static void cache_l1_write(Cache_level1 * const this, hwaddr_t addr, size_t len, uint32_t data)

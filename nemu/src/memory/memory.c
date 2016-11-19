@@ -5,8 +5,8 @@
 
 extern Cache_level1 cache_l1;
 
-uint32_t dram_read(hwaddr_t, size_t);
-void dram_write(hwaddr_t, size_t, uint32_t);
+//uint32_t dram_read(hwaddr_t, size_t);
+//void dram_write(hwaddr_t, size_t, uint32_t);
 
 
 /* Memory accessing interfaces */
