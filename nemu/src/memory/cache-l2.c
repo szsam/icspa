@@ -6,6 +6,9 @@ void dram_write(hwaddr_t, size_t, uint32_t);
 
 #include "memory/cache-l2.h"
 
+uint32_t c2_hit = 0;
+uint32_t c2_miss = 0;
+
 // Line Matching
 static int line_matching(Line *selected_set, MEM_ADDR madd) {
 	int lnIx = 0;
@@ -63,7 +66,10 @@ static void cache_read_internal(Cache_level2 * const this, hwaddr_t addr, uint8_
 
 	if (lnIx == LINES_PER_SET) { // miss!
 		lnIx = handle_miss(selected_set, madd);
+		++c2_miss;
 	}
+	else ++c2_hit;
+
 	// read data from SRAM
 	memcpy(data, selected_set[lnIx].block + madd.block_offset, len);
 }
@@ -110,7 +116,9 @@ static void cache_write_internal(struct Cache_level2 * const this,
 	// write miss, write allocate
 	if (lnIx == LINES_PER_SET) {
 		lnIx = handle_miss(selected_set, madd);
+		++c2_miss;
 	}
+	else ++c2_hit;
 
 	// update cache, but do NOT update main memory immediately
 	memcpy(selected_set[lnIx].block + madd.block_offset, &data, len);

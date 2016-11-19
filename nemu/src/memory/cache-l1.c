@@ -10,6 +10,9 @@ extern Cache_level2 cache_l2;
 
 #include "memory/cache-l1.h"
 
+uint32_t c1_hit = 0;
+uint32_t c1_miss = 0;
+
 // Line Matching
 static int line_matching(Line *selected_set, MEM_ADDR madd) {
 	int lnIx = 0;
@@ -34,6 +37,7 @@ static void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_
 	int lnIx = line_matching(selected_set, madd);
 
 	if (lnIx == LINES_PER_SET) { // miss!
+		++c1_miss;
 		lnIx = 0;
 		while (lnIx < LINES_PER_SET && selected_set[lnIx].valid)
 			++lnIx;
@@ -50,6 +54,8 @@ static void cache_read_internal(Cache_level1 * const this, hwaddr_t addr, uint8_
 			memcpy(selected_set[lnIx].block + 4*i, &temp, 4);
 		}
 	}
+	else ++c1_hit;
+
 	// read data from SRAM
 	memcpy(data, selected_set[lnIx].block + madd.block_offset, len);
 }
@@ -95,8 +101,10 @@ static void cache_write_internal(struct Cache_level1 * const this,
 	
 	if (lnIx < LINES_PER_SET) {
 		// hit
+		++c1_hit;
 		memcpy(selected_set[lnIx].block+madd.block_offset, &data, len);
 	}
+	else ++c1_miss;
 
 	// write through; in case of miss, no write allocate
 	cache_l2.write(&cache_l2, addr, len, data);

@@ -11,6 +11,11 @@
 void cpu_exec(uint32_t);
 uint32_t dram_read(hwaddr_t, size_t);
 
+extern uint32_t c1_hit;
+extern uint32_t c1_miss;
+extern uint32_t c2_hit;
+extern uint32_t c2_miss;
+
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 char* rl_gets() {
 	static char *line_read = NULL;
@@ -54,6 +59,8 @@ static int cmd_d(char *args);
 
 static int cmd_bt(char *args);
 
+static int cmd_cache(char *args);
+
 static struct {
 	char *name;
 	char *description;
@@ -68,7 +75,8 @@ static struct {
 	{ "p", "Print value of expression EXPR", cmd_p },
 	{ "w", "Set an watchpoint for an expression: w EXPR", cmd_w },
 	{ "d", "Delete a watchpoint: d N", cmd_d },
-	{ "bt", "Print backtrace of all stack frames", cmd_bt }
+	{ "bt", "Print backtrace of all stack frames", cmd_bt },
+	{ "cache", "Print the performance of cache", cmd_cache }
 
 	/* TODO: Add more commands */
 
@@ -268,6 +276,16 @@ static int cmd_bt(char *args) {
 		pc = swaddr_read(frame_ptr + 4, 4);
 		frame_ptr = swaddr_read(frame_ptr, 4);
 	}
+	return 0;
+}
+
+static int cmd_cache(char *args) {
+	printf("L1 cache hit: %u times\n", c1_hit);	
+	printf("L1 cache miss: %u times\n", c1_miss);	
+	printf("L1 cache hit rate: %f%%\n", 100.0 * c1_hit / (c1_hit + c1_miss));
+	printf("L2 cache hit: %u times\n", c2_hit);	
+	printf("L2 cache miss: %u times\n", c2_miss);	
+	printf("L2 cache hit rate: %f%%\n", 100.0 * c2_hit / (c2_hit + c2_miss));
 	return 0;
 }
 
