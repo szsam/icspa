@@ -104,4 +104,7 @@ void restart() {
 	/* Initialize Cache */
 	cache_l1.init(&cache_l1);
 	cache_l2.init(&cache_l2);
+
+	/* Initialize Control Register Zero */
+	cpu.cr0.val = 0;	// protrction not enable (real address mode)
 }
