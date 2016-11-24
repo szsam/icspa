@@ -32,6 +32,7 @@ void lnaddr_write(lnaddr_t addr, size_t len, uint32_t data) {
 
 lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
 	assert(seg_reg(sreg).table_indicator == 0);
+	assert(seg_reg(sreg).index != 0);
 	// sizeof a segment descriptor is 64-bit
 	lnaddr_t desc_add = cpu.gdtr.base + 8 * seg_reg(sreg).index;
 	SegDesc theDesc;
