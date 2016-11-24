@@ -6,7 +6,8 @@
 make_helper(lgdt) {
 	uint8_t modrm = instr_fetch(eip + 2, 1);
 //	assert(modrm == 0x15);
-	Log("%u", modrm);
+	Log("%x", modrm);
+	assert(0);
 
 	swaddr_t addr = instr_fetch(eip + 3, 4);
 	cpu.gdtr.limit = swaddr_read(addr, 2);
