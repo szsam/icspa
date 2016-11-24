@@ -11,5 +11,5 @@ make_helper(lgdt) {
 	cpu.gdtr.limit = swaddr_read(addr, 2);
 	cpu.gdtr.base = swaddr_read(addr + 2, 4);
 	print_asm("lgdt 0x%x", addr);
-	return 7;
+	return 6;
 }
