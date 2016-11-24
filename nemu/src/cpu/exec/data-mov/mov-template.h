@@ -36,9 +36,8 @@ make_helper(mov_cr2r) {
 	modrm.val = temp;
 
 	uint32_t control_reg;
-	Log("%d", modrm.reg);
 	switch (modrm.reg) {
-		case 0: control_reg = cpu.cr0.val;
+		case 0: control_reg = cpu.cr0.val; break;
 		default: assert(0);
 	}
 
@@ -54,7 +53,7 @@ make_helper(mov_r2cr) {
 	modrm.val = temp;
 
 	switch (modrm.reg) {
-		case 0: cpu.cr0.val = reg_l(modrm.R_M);
+		case 0: cpu.cr0.val = reg_l(modrm.R_M); break;
 		default: assert(0);
 	}
 
