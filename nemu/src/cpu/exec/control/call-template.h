@@ -9,7 +9,7 @@ make_helper(call_si_l) {
 	uint32_t offset = op_src->val;
 
     cpu.esp -= 4;
-    swaddr_write(cpu.esp, 4, cpu.eip + 4 + 1);
+    swaddr_write(cpu.esp, 4, cpu.eip + 4 + 1, R_SS);
 
     cpu.eip += offset; 
 
@@ -22,7 +22,7 @@ make_helper(call_rm_l) {
 	int len = decode_rm_l(eip+1);
 
     cpu.esp -= 4;
-    swaddr_write(cpu.esp, 4, cpu.eip + len + 1);
+    swaddr_write(cpu.esp, 4, cpu.eip + len + 1, R_SS);
 
     cpu.eip = op_src->val; 
 	do_not_add_instr_len_to_eip = true;

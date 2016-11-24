@@ -8,8 +8,8 @@ make_helper(lgdt) {
 	assert(modrm == 0x15);
 
 	swaddr_t addr = instr_fetch(eip + 2, 4);
-	cpu.gdtr.limit = swaddr_read(addr, 2);
-	cpu.gdtr.base = swaddr_read(addr + 2, 4);
+	cpu.gdtr.limit = swaddr_read(addr, 2, -1);
+	cpu.gdtr.base = swaddr_read(addr + 2, 4, -1);
 
 	Log("gdtr.limit=%d, base=0x%x", cpu.gdtr.limit, cpu.gdtr.base);
 

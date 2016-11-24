@@ -16,7 +16,11 @@ int load_addr(swaddr_t eip, ModR_M *m, Operand *rm) {
 		disp_offset = 2;
 		scale = s.ss;
 
-		if(s.index != R_ESP) { index_reg = s.index; }
+		if (s.index != R_ESP) { index_reg = s.index; }
+
+		// esp or ebp is used as base register
+		if ((s.base == R_ESP) || (s.base == R_EBP && m->mod != 0))
+		   	rm->sreg = R_SS; 
 	}
 	else {
 		/* no SIB */
@@ -108,8 +112,12 @@ int read_ModR_M(swaddr_t eip, Operand *rm, Operand *reg) {
 		return 1;
 	}
 	else {
+		rm->sreg = R_DS;
+		if ((m.mod == 1 || m.mod == 2) && m.R_M == R_EBP)
+			rm->sreg = R_SS;
+
 		int instr_len = load_addr(eip, &m, rm);
-		rm->val = swaddr_read(rm->addr, rm->size);
+		rm->val = swaddr_read(rm->addr, rm->size, rm->sreg);
 		return instr_len;
 	}
 }

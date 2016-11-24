@@ -4,7 +4,7 @@
 #define instr scas
 
 make_helper(concat(scas_, SUFFIX)) {
-	DATA_TYPE data = MEM_R(cpu.edi);
+	DATA_TYPE data = MEM_R(cpu.edi, R_ES);
 	DATA_TYPE result = REG(R_EAX) - data;
 	
 	cpu.SF = MSB(result);

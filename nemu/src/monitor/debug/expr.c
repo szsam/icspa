@@ -355,7 +355,7 @@ uint32_t eval(int p, int q) {
 			switch(tokens[op].type) {
 				case NOT: return !val;
 				case DEREF: 
-					return swaddr_read(val, 4);
+					return swaddr_read(val, 4, R_DS);
 				default: assert(0);
 			}
 

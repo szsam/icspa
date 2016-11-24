@@ -23,7 +23,7 @@ static void do_execute() {
 //	}
 
 	/* the following implementation should also work. */
-	DATA_TYPE data = MEM_R(cpu.esp);
+	DATA_TYPE data = MEM_R(cpu.esp, R_SS);
 	OPERAND_W(op_src, data);
 	cpu.esp += DATA_BYTE;
 

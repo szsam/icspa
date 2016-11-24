@@ -3,7 +3,7 @@
 #define instr stos
 
 make_helper(concat(stos_, SUFFIX)) {
-	MEM_W(cpu.edi, REG(R_EAX));
+	MEM_W(cpu.edi, REG(R_EAX), R_ES);
 	int IncDec = cpu.DF ? -DATA_BYTE : DATA_BYTE;
 	cpu.edi += IncDec;
 

@@ -160,7 +160,7 @@ static int cmd_x(char *args) {
 
 	swaddr_t addr_temp = addr;
 	for (int i = 0; i < num; i++) {
-		uint32_t data = swaddr_read(addr_temp, 4);
+		uint32_t data = swaddr_read(addr_temp, 4, R_DS);
 
 		if (i % 4 == 0)
 		{
@@ -269,12 +269,12 @@ static int cmd_bt(char *args) {
 		if (num++ != 0) printf("0x%08x in ", pc);
 		printf("%s (", func_name(pc));
 		for (int offset = 8; offset <=16; offset += 4) {
-			printf("0x%x, ", swaddr_read(frame_ptr + offset, 4) );
+			printf("0x%x, ", swaddr_read(frame_ptr + offset, 4, R_SS) );
 		}
-		printf("0x%x)\n", swaddr_read(frame_ptr + 20, 4) );
+		printf("0x%x)\n", swaddr_read(frame_ptr + 20, 4, R_SS) );
 
-		pc = swaddr_read(frame_ptr + 4, 4);
-		frame_ptr = swaddr_read(frame_ptr, 4);
+		pc = swaddr_read(frame_ptr + 4, 4, R_SS);
+		frame_ptr = swaddr_read(frame_ptr, 4, R_SS);
 	}
 	return 0;
 }
