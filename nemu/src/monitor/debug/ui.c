@@ -174,21 +174,21 @@ static int cmd_x(char *args) {
 
 	}
 
-	printf("\nread from DRAM:\n");
-	for (int i = 0; i < num; i++) {
-		uint32_t data = dram_read(addr, 4);
-
-		if (i % 4 == 0)
-		{
-			printf("0x%x:\t", addr);
-		}
-		printf("0x%x\t", data);
-		if ((i + 1) % 4 == 0)
-			printf("\n");
-
-		addr += 4;
-
-	}
+//	printf("\nread from DRAM:\n");
+//	for (int i = 0; i < num; i++) {
+//		uint32_t data = dram_read(addr, 4);
+//
+//		if (i % 4 == 0)
+//		{
+//			printf("0x%x:\t", addr);
+//		}
+//		printf("0x%x\t", data);
+//		if ((i + 1) % 4 == 0)
+//			printf("\n");
+//
+//		addr += 4;
+//
+//	}
 
 	printf("\n");
 	return 0;
