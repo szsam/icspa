@@ -1,3 +1,4 @@
+#include "cpu/decode/modrm.h"
 #include "cpu/exec/template-start.h"
 
 #define instr mov
@@ -27,5 +28,38 @@ make_helper(concat(mov_moffs2a_, SUFFIX)) {
 	print_asm("mov" str(SUFFIX) " 0x%x,%%%s", addr, REG_NAME(R_EAX));
 	return 5;
 }
+
+#if DATA_BYTE == 4
+make_helper(mov_cr2r) {
+	uint8_t temp = instr_fetch(eip + 1, 1);
+	ModR_M modrm;
+	modrm.val = temp;
+
+	uint32_t control_reg;
+	switch (modrm.reg) {
+		case 0: control_reg = cpu.cr0.val;
+		default: assert(0);
+	}
+
+	reg_l(modrm.R_M) = control_reg;
+
+	print_asm("mov cr%d,%%%s", modrm.reg, regsl[modrm.R_M]);
+	return 2;
+}
+
+make_helper(mov_r2cr) {
+	uint8_t temp = instr_fetch(eip + 1, 1);
+	ModR_M modrm;
+	modrm.val = temp;
+
+	switch (modrm.reg) {
+		case 0: cpu.cr0.val = reg_l(modrm.R_M);
+		default: assert(0);
+	}
+
+	print_asm("mov %%%s,cr%d", regsl[modrm.R_M], modrm.reg);
+	return 2;
+}
+#endif
 
 #include "cpu/exec/template-end.h"
