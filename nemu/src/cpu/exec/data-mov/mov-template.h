@@ -43,7 +43,7 @@ make_helper(mov_cr2r) {
 
 	reg_l(modrm.R_M) = control_reg;
 
-	print_asm("mov cr%d,%%%s", modrm.reg, regsl[modrm.R_M]);
+	print_asm("mov %%cr%d,%%%s", modrm.reg, regsl[modrm.R_M]);
 	return 2;
 }
 
@@ -57,7 +57,7 @@ make_helper(mov_r2cr) {
 		default: assert(0);
 	}
 
-	print_asm("mov %%%s,cr%d", regsl[modrm.R_M], modrm.reg);
+	print_asm("mov %%%s,%%cr%d", regsl[modrm.R_M], modrm.reg);
 	return 2;
 }
 #endif
