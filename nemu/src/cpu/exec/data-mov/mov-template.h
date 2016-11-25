@@ -62,4 +62,15 @@ make_helper(mov_r2cr) {
 }
 #endif
 
+#if DATA_BYTE == 2
+make_helper(mov_rm2sr) {
+	op_src->size = 2;
+	int len = read_ModR_M(eip + 1, op_src, op_dest);
+	seg_reg(op_dest->reg).val = (uint16_t)op_src->val;
+	print_asm("mov to segment register");
+	return 1 + len;
+}
+
+#endif
+
 #include "cpu/exec/template-end.h"

@@ -110,5 +110,5 @@ void restart() {
 
 	/* The initialization of segment register CS is inconsistent 
 	 * with 80386 manual,  we do it by KISS rule however. */
-	cpu.cs.index = 1;
+	cpu.cs.val = 0x8;
 }
