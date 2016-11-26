@@ -31,34 +31,42 @@ void lnaddr_write(lnaddr_t addr, size_t len, uint32_t data) {
 }
 
 lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
-	assert(seg_reg(sreg).table_indicator == 0);
-	assert(seg_reg(sreg).index != 0);
-	// sizeof a segment descriptor is 64-bit
-	lnaddr_t desc_add = cpu.gdtr.base + 8 * seg_reg(sreg).index;
-	SegDesc theDesc;
+	if (!seg_reg(sreg).cache.valid) {
+		assert(seg_reg(sreg).table_indicator == 0);
+		assert(seg_reg(sreg).index != 0);
+		// sizeof a segment descriptor is 64-bit
+		lnaddr_t desc_add = cpu.gdtr.base + 8 * seg_reg(sreg).index;
+		SegDesc theDesc;
 
-	assert(8 * seg_reg(sreg).index + 7 <= cpu.gdtr.limit);
-	// read the descriptor
-	uint32_t temp;
-	temp = lnaddr_read(desc_add, 4);
-	memcpy(&theDesc, &temp, 4);
-	temp = lnaddr_read(desc_add + 4, 4);
-	memcpy((void *)&theDesc + 4, &temp, 4);
+		assert(8 * seg_reg(sreg).index + 7 <= cpu.gdtr.limit);
+		// read the descriptor
+		uint32_t temp;
+		temp = lnaddr_read(desc_add, 4);
+		memcpy(&theDesc, &temp, 4);
+		temp = lnaddr_read(desc_add + 4, 4);
+		memcpy((void *)&theDesc + 4, &temp, 4);
 
-	lnaddr_t seg_base_add = 
-	(((theDesc.base_31_24 << 8) + theDesc.base_23_16) << 16 ) + theDesc.base_15_0;
+		lnaddr_t seg_base_add = 
+			(((theDesc.base_31_24 << 8) + theDesc.base_23_16) << 16 ) + theDesc.base_15_0;
 
-	uint32_t seg_limit = (theDesc.limit_19_16 << 4) + theDesc.limit_15_0;
-	if (theDesc.granularity) { 
-		// the limit is interpreted in units of 4 Kilobytes
-		seg_limit <<= 12;
-		seg_limit |= 0xfff;
+		uint32_t seg_limit = (theDesc.limit_19_16 << 4) + theDesc.limit_15_0;
+		if (theDesc.granularity) { 
+			// the limit is interpreted in units of 4 Kilobytes
+			seg_limit <<= 12;
+			seg_limit |= 0xfff;
+		}
+
+		// save limit and base in hidden part of segment register
+		seg_reg(sreg).cache.valid = 1;
+		seg_reg(sreg).cache.limit = seg_limit;
+		seg_reg(sreg).cache.base = seg_base_add;
+
+		assert(theDesc.present);
 	}
-	assert(addr + len <= seg_limit);
 
-	assert(theDesc.present);
-
-	return seg_base_add + addr;
+	// check segment limit
+	assert(addr + len <= seg_reg(sreg).cache.limit);
+	return seg_reg(sreg).cache.base + addr;
 }
 
 uint32_t swaddr_read(swaddr_t addr, size_t len, uint8_t sreg) {

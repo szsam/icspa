@@ -100,13 +100,20 @@ typedef struct GateDescriptor {
 	uint32_t offset_31_16     : 16;
 } GateDesc;
 
-typedef union SegmentSelector {
-	struct {
-		uint32_t rpl				: 2;
-		uint32_t table_indicator	: 1;
-		uint32_t index				: 13;
+typedef struct SegmentSelector {
+	union {
+		struct {
+			uint32_t rpl				: 2;
+			uint32_t table_indicator	: 1;
+			uint32_t index				: 13;
+		};
+		uint16_t val;
 	};
-	uint16_t val;
+	struct {
+		uint32_t base;
+		uint32_t limit;
+		bool valid;
+	}cache;
 } SegSel;
 
 typedef struct GlobalDescriptorTableRegister {

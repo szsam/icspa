@@ -108,7 +108,9 @@ void restart() {
 	/* Initialize Control Register Zero */
 	cpu.cr0.val = 0;	// protrction not enable (real address mode)
 
-	/* The initialization of segment register CS is inconsistent 
-	 * with 80386 manual,  we do it by KISS rule however. */
-	cpu.cs.val = 0x8;
+	/* The initialization of segment register CS is slightly different
+	 * from what 80386 manual specifies, yet we follow KISS rule here. */
+	cpu.cs.cache.valid = 1;
+	cpu.cs.cache.base = 0;
+	cpu.cs.cache.limit = 0xffffffff;
 }
