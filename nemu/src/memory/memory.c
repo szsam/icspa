@@ -37,6 +37,7 @@ lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
 	lnaddr_t desc_add = cpu.gdtr.base + 8 * seg_reg(sreg).index;
 	SegDesc theDesc;
 
+	assert(desc_add + 7 <= cpu.gdtr.limit);
 	// read the descriptor
 	uint32_t temp;
 	temp = lnaddr_read(desc_add, 4);
