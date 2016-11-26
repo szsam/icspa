@@ -112,7 +112,7 @@ typedef struct SegmentSelector {
 	struct {
 		uint32_t base;
 		uint32_t limit;
-		bool valid;
+		uint8_t valid;
 	}cache;
 } SegSel;
 
