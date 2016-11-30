@@ -98,7 +98,7 @@ lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
 		lnaddr_t seg_base_add = 
 			(((theDesc.base_31_24 << 8) + theDesc.base_23_16) << 16 ) + theDesc.base_15_0;
 
-		uint32_t seg_limit = (theDesc.limit_19_16 << 4) + theDesc.limit_15_0;
+		uint32_t seg_limit = (theDesc.limit_19_16 << 16) + theDesc.limit_15_0;
 		if (theDesc.granularity) { 
 			// the limit is interpreted in units of 4 Kilobytes
 			seg_limit <<= 12;
