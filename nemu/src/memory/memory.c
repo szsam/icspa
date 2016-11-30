@@ -50,7 +50,7 @@ hwaddr_t page_translate(lnaddr_t addr) {
 
 uint32_t lnaddr_read(lnaddr_t addr, size_t len) {
 	if (cpu.cr0.paging) {
-		if ((addr & 0xfffff000) == ((addr+len-1) & 0xfffff000)) {
+		if ((addr & 0xfffff000) != ((addr+len-1) & 0xfffff000)) {
 			// data cross page boundary
 			assert(0);
 		}
@@ -65,7 +65,7 @@ uint32_t lnaddr_read(lnaddr_t addr, size_t len) {
 
 void lnaddr_write(lnaddr_t addr, size_t len, uint32_t data) {
 	if (cpu.cr0.paging) {
-		if ((addr & 0xfffff000) == ((addr+len-1) & 0xfffff000)) {
+		if ((addr & 0xfffff000) != ((addr+len-1) & 0xfffff000)) {
 			// data cross page boundary
 			assert(0);
 		}
