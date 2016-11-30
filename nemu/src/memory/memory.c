@@ -4,6 +4,8 @@
 #include "memory/cache-template-end.h"
 #include "cpu/reg.h"
 
+#define PTE_SIZE 4
+
 extern Cache_level1 cache_l1;
 
 //uint32_t dram_read(hwaddr_t, size_t);
@@ -22,14 +24,61 @@ void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
 	cache_l1.write(&cache_l1, addr, len, data);
 }
 
+hwaddr_t page_translate(lnaddr_t addr) {
+	union {
+		struct {
+			uint32_t offset : 12;
+			uint32_t page	: 10;
+			uint32_t dir	: 10;
+		};
+		lnaddr_t lnaddr;
+	}lnaddr_fmt;
+
+	lnaddr_fmt.lnaddr = addr;
+	hwaddr_t dir_entry_add = (cpu.cr3.page_directory_base << 12) + PTE_SIZE * lnaddr_fmt.dir;
+	PDE dir_entry;
+    dir_entry.val = hwaddr_read(dir_entry_add, PTE_SIZE);
+	assert(dir_entry.present);
+
+	hwaddr_t tbl_entry_add = (dir_entry.page_frame << 12) + PTE_SIZE * lnaddr_fmt.page;
+	PTE tbl_entry;
+	tbl_entry.val = hwaddr_read(tbl_entry_add, PTE_SIZE);
+	assert(tbl_entry.present);
+
+	return (tbl_entry.page_frame << 12) + lnaddr_fmt.offset;
+}
+
 uint32_t lnaddr_read(lnaddr_t addr, size_t len) {
-	return hwaddr_read(addr, len);
+	if (cpu.cr0.paging) {
+		if ((addr & 0xfffff000) == ((addr+len-1) & 0xfffff000)) {
+			// data cross page boundary
+			assert(0);
+		}
+		else {
+			hwaddr_t hwaddr = page_translate(addr);
+			return hwaddr_read(hwaddr, len);
+		}
+	}
+	else
+		return hwaddr_read(addr, len);
 }
 
 void lnaddr_write(lnaddr_t addr, size_t len, uint32_t data) {
-	hwaddr_write(addr, len, data);
+	if (cpu.cr0.paging) {
+		if ((addr & 0xfffff000) == ((addr+len-1) & 0xfffff000)) {
+			// data cross page boundary
+			assert(0);
+		}
+		else {
+			hwaddr_t hwaddr = page_translate(addr);
+			hwaddr_write(hwaddr, len, data);
+		}
+	}
+	else
+		hwaddr_write(addr, len, data);
 }
 
+// segment translation in protect mode
 lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
 	if (!seg_reg(sreg).cache.valid) {
 		assert(seg_reg(sreg).table_indicator == 0);
