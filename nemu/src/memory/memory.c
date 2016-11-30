@@ -115,7 +115,6 @@ lnaddr_t seg_translate(swaddr_t addr, size_t len, uint8_t sreg) {
 
 	// check segment limit
 	assert(addr + len <= seg_reg(sreg).cache.limit);
-	Log("sreg=%d, addr=%x, len=%d, limit=%x", sreg, addr, len, seg_reg(sreg).cache.limit);
 	return seg_reg(sreg).cache.base + addr;
 }
 
