@@ -38,12 +38,14 @@ hwaddr_t page_translate(lnaddr_t addr) {
 	hwaddr_t dir_entry_add = (cpu.cr3.page_directory_base << 12) + PTE_SIZE * lnaddr_fmt.dir;
 	PDE dir_entry;
     dir_entry.val = hwaddr_read(dir_entry_add, PTE_SIZE);
-	assert(dir_entry.present);
+	// assert(dir_entry.present);
+	Assert(dir_entry.present, "lnaddr=0x%x", addr);
 
 	hwaddr_t tbl_entry_add = (dir_entry.page_frame << 12) + PTE_SIZE * lnaddr_fmt.page;
 	PTE tbl_entry;
 	tbl_entry.val = hwaddr_read(tbl_entry_add, PTE_SIZE);
-	assert(tbl_entry.present);
+	// assert(tbl_entry.present);
+	Assert(dir_entry.present, "lnaddr=0x%x", addr);
 
 	return (tbl_entry.page_frame << 12) + lnaddr_fmt.offset;
 }
