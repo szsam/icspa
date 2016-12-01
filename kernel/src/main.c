@@ -22,7 +22,7 @@ volatile int x = 0;
  */
 void init() {
 #ifdef IA32_PAGE
-	x = 1;
+	*(int *)va_to_pa(&x) = 1;
 	/* We must set up kernel virtual memory first because our kernel thinks it 
 	 * is located at 0xc0100000, which is set by the linking options in Makefile.
 	 * Before setting up correct paging, no global variable can be used. */
