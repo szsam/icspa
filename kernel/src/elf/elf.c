@@ -50,13 +50,13 @@ uint32_t loader() {
 			 */
 			// memcpy((void *)(ph->p_vaddr), buf + ph->p_offset, ph->p_filesz);
 			// `buf' is used to and ONLY to store the ELF-header and program-header!
-			ramdisk_read((uint8_t *)pa_to_va(hwaddr), ph->p_offset, ph->p_filesz);
+			ramdisk_read((uint8_t *)hwaddr, ph->p_offset, ph->p_filesz);
 			 
 			/* TODO: zero the memory region 
 			 * [VirtAddr + FileSiz, VirtAddr + MemSiz)
 			 */
 			if (ph->p_memsz > ph->p_filesz)
-				memset((void *)pa_to_va(hwaddr) + ph->p_filesz, 0, ph->p_memsz-ph->p_filesz);
+				memset((void *)hwaddr + ph->p_filesz, 0, ph->p_memsz-ph->p_filesz);
 
 #ifdef IA32_PAGE
 			/* Record the program break for future use. */
