@@ -45,7 +45,7 @@ hwaddr_t page_translate(lnaddr_t addr) {
 	PTE tbl_entry;
 	tbl_entry.val = hwaddr_read(tbl_entry_add, PTE_SIZE);
 	// assert(tbl_entry.present);
-	Assert(dir_entry.present, "lnaddr=0x%x", addr);
+	Assert(tbl_entry.present, "lnaddr=0x%x", addr);
 
 	return (tbl_entry.page_frame << 12) + lnaddr_fmt.offset;
 }
