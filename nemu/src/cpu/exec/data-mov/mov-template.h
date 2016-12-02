@@ -1,4 +1,5 @@
 #include "cpu/decode/modrm.h"
+#include "memory/tlb.h"
 #include "cpu/exec/template-start.h"
 
 #define instr mov
@@ -55,7 +56,10 @@ make_helper(mov_r2cr) {
 
 	switch (modrm.reg) {
 		case 0: cpu.cr0.val = reg_l(modrm.R_M); break;
-		case 3: cpu.cr3.val = reg_l(modrm.R_M); break;
+		case 3: 
+			cpu.cr3.val = reg_l(modrm.R_M);
+			tlb.flush(&tlb);
+			break;
 		default: assert(0);
 	}
 
