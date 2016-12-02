@@ -20,12 +20,12 @@ void create_video_mapping() {
 	// panic("please implement me");
 	PDE *updir = get_updir();
 	updir[VMEM_ADDR / PT_SIZE].val = make_pde(va_to_pa(uptable));
-	assert(updir[0].present);
+	nemu_assert(updir[0].present);
 	
 	uint32_t pframe_addr = VMEM_ADDR;
 	for (int ix = 0; ix < NR_VMEM_PAGE_TBL; ++ix) {
 		uptable[ix].val = make_pte(pframe_addr);
-		assert(uptable[ix].present);
+		nemu_assert(uptable[ix].present);
 		pframe_addr += PAGE_SIZE;
 	}
 }
