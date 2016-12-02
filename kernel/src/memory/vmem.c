@@ -28,10 +28,10 @@ void create_video_mapping() {
 		nemu_assert(uptable[ix].present);
 		pframe_addr += PAGE_SIZE;
 	}
+	set_bp();
 }
 
 void video_mapping_write_test() {
-	nemu_assert(0);
 	int i;
 	uint32_t *buf = (void *)VMEM_ADDR;
 	for(i = 0; i < SCR_SIZE / 4; i ++) {
