@@ -19,6 +19,8 @@ extern Cache_level1 cache_l1;
 extern Cache_level2 cache_l2;
 #include "memory/cache-template-end.h"
 
+#include "memory/tlb.h"
+
 FILE *log_fp = NULL;
 
 static void init_log() {
@@ -113,4 +115,7 @@ void restart() {
 	cpu.cs.cache.valid = 1;
 	cpu.cs.cache.base = 0;
 	cpu.cs.cache.limit = 0xffffffff;
+
+	/* Flush TLB */
+	tlb.flush(&tlb);
 }
