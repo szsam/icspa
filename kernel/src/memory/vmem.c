@@ -21,7 +21,6 @@ void create_video_mapping() {
 	PDE *updir = get_updir();
 	updir[VMEM_ADDR / PT_SIZE].val = make_pde(va_to_pa(uptable));
 	nemu_assert(updir[0].present);
-	nemu_assert(0);
 	
 	uint32_t pframe_addr = VMEM_ADDR;
 	for (int ix = 0; ix < NR_VMEM_PAGE_TBL; ++ix) {
@@ -40,6 +39,7 @@ void video_mapping_write_test() {
 }
 
 void video_mapping_read_test() {
+	nemu_assert(0);
 	int i;
 	uint32_t *buf = (void *)VMEM_ADDR;
 	for(i = 0; i < SCR_SIZE / 4; i ++) {
