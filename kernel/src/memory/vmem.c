@@ -28,7 +28,6 @@ void create_video_mapping() {
 		assert(uptable[ix].present);
 		pframe_addr += PAGE_SIZE;
 	}
-	assert(0);
 }
 
 void video_mapping_write_test() {
@@ -40,6 +39,7 @@ void video_mapping_write_test() {
 }
 
 void video_mapping_read_test() {
+	set_bp();
 	int i;
 	uint32_t *buf = (void *)VMEM_ADDR;
 	for(i = 0; i < SCR_SIZE / 4; i ++) {
