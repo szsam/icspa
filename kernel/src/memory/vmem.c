@@ -28,7 +28,6 @@ void create_video_mapping() {
 		nemu_assert(uptable[ix].present);
 		pframe_addr += PAGE_SIZE;
 	}
-	set_bp();
 }
 
 void video_mapping_write_test() {
@@ -45,6 +44,7 @@ void video_mapping_read_test() {
 	for(i = 0; i < SCR_SIZE / 4; i ++) {
 		assert(buf[i] == i);
 	}
+	set_bp();
 }
 
 void video_mapping_clear() {
