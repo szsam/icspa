@@ -30,7 +30,7 @@ static void fill(TLB *const this, uint32_t vpn, PTE pte)
 
 	if (ix == NR_TLB_BLOCK) { 
 		// TLB is full, thus random replacement algorithm is used
-		ix = rand() & NR_TLB_BLOCK;
+		ix = rand() % NR_TLB_BLOCK;
 	}
 
 	this->blocks[ix].valid = 1;
