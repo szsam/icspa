@@ -4,12 +4,13 @@
 
 #define VMEM_ADDR 0xa0000
 #define SCR_SIZE (320 * 200)
-#define NR_VMEM_PAGE_TBL ((SCR_SIZE + PAGE_SIZE) / PAGE_SIZE)
+#define NR_VMEM_PTE ((SCR_SIZE + PAGE_SIZE) / PAGE_SIZE)
+#define PTBL_INDEX_START ((VMEM_ADDR >> 12) & 0x3ff)
 
 /* Use the function to get the start address of user page directory. */
 PDE* get_updir();
 
-static PTE uptable[NR_VMEM_PAGE_TBL] align_to_page;
+static PTE uptable[NR_PTE] align_to_page;
 
 void create_video_mapping() {
 	/* TODO: create an identical mapping from virtual memory area 
@@ -23,12 +24,12 @@ void create_video_mapping() {
 	assert(updir[0].present);
 	
 	uint32_t pframe_addr = VMEM_ADDR;
-	for (int ix = 0; ix < NR_VMEM_PAGE_TBL; ++ix) {
+	for (int ix = PTBL_INDEX_START; 
+			ix < PTBL_INDEX_START + NR_VMEM_PTE; ++ix) {
 		uptable[ix].val = make_pte(pframe_addr);
 		assert(uptable[ix].present);
 		pframe_addr += PAGE_SIZE;
 	}
-	set_bp();
 }
 
 void video_mapping_write_test() {
