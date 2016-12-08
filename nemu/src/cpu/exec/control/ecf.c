@@ -1,9 +1,8 @@
 #include <setjmp.h>
 extern jmp_buf jbuf;
 
-#include "common.h"
-#include "cpu/reg.h"
-#include "memory/memory.h"
+#include "cpu/helper.h"
+#include "cpu/exec/helper.h"
 
 void raise_intr(uint8_t NO) { 
 	/* TODO: Trigger an interrupt/exception with ``NO''.
@@ -31,4 +30,30 @@ void raise_intr(uint8_t NO) {
 	/* Jump back to cpu_exec() */
 	longjmp(jbuf, 1);
 
+}
+
+make_helper(interrupt) {
+	size_t idt_index = instr_fetch(eip + 1, 1);
+	cpu.esp -= 4;
+	swaddr_write(cpu.esp, 4, cpu.EFLAGS, R_SS);
+	cpu.esp -= 4;
+	swaddr_write(cpu.esp, 4, cpu.cs.val, R_SS);
+	cpu.esp -= 4;
+	swaddr_write(cpu.esp, 4, eip + 2, R_SS);
+
+	raise_intr(idt_index);
+
+	print_asm("int 0x%x", idt_index);
+	return 2;
+}
+
+make_helper(iret) {
+	cpu.eip = swaddr_read(cpu.esp, 4, R_SS);
+	cpu.cs.val = swaddr_read(cpu.esp + 4, 4, R_SS);
+	cpu.cs.cache.valid = 0;
+	cpu.EFLAGS = swaddr_read(cpu.esp + 8, 4, R_SS);
+	cpu.esp += 12;
+
+	print_asm("iret");
+	return 1;
 }
