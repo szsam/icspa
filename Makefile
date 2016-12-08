@@ -77,5 +77,5 @@ submit: clean
 	cd .. && tar cvj $(shell pwd | grep -o '[^/]*$$') > $(STU_ID).tar.bz2
 
 count:
-	find ~/ics2016/nemu | egrep '\.c$$|\.h$$' | xargs cat | grep -cv '^[[:blank:]]*$$'
+	find nemu/ | grep -E '\.c$$|\.h$$' | xargs cat | grep -cv '^[[:blank:]]*$$'
 

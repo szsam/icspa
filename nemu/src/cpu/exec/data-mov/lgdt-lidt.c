@@ -16,3 +16,15 @@ make_helper(lgdt) {
 	print_asm("lgdt 0x%x", addr);
 	return 6;
 }
+
+make_helper(lidt) {
+	uint8_t modrm = instr_fetch(eip + 1, 1);
+	assert(modrm == 0x15);
+
+	swaddr_t addr = instr_fetch(eip + 2, 4);
+	cpu.idtr.limit = swaddr_read(addr, 2, -1);
+	cpu.idtr.base = swaddr_read(addr + 2, 4, -1);
+
+	print_asm("lidt 0x%x", addr);
+	return 6;
+}

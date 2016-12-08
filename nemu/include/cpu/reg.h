@@ -59,6 +59,11 @@ typedef struct {
 	CR3 cr3;
 	GDTR gdtr;
 
+	struct  {
+		uint16_t limit;
+		uint32_t base;
+	} idtr;
+
 	union {
 		struct {
 			SegSel es, cs, ss, ds;
