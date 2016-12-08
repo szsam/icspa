@@ -79,6 +79,7 @@ static uint32_t cache_l1_read(Cache_level1 * const this, hwaddr_t addr, size_t l
 	switch (len) {
 		case 1: return unalign_rw(temp, 1);
 		case 2: return unalign_rw(temp, 2);
+		case 3: return unalign_rw(temp, 3);
 		case 4: return unalign_rw(temp, 4);
 		default: assert(0);
 	}
