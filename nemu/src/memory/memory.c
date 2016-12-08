@@ -63,7 +63,22 @@ uint32_t lnaddr_read(lnaddr_t addr, size_t len) {
 	if (cpu.cr0.paging) {
 		if ((addr & 0xfffff000) != ((addr+len-1) & 0xfffff000)) {
 			// data cross page boundary
-			assert(0);
+			lnaddr_t next_page_addr = (addr | 0xfff) + 1;
+			size_t len1 = next_page_addr - addr;
+			size_t len2 = len - len1;
+			hwaddr_t hwaddr1 = page_translate(addr);
+			hwaddr_t hwaddr2 = page_translate(next_page_addr);
+			uint32_t data1 = hwaddr_read(hwaddr1, len1);
+			uint32_t data2 = hwaddr_read(hwaddr2, len2);
+			uint8_t temp[4];
+			memcpy(temp, &data1, len1);
+			memcpy(temp + len1, &data2, len2);
+			switch (len) {
+				case 1: return unalign_rw(temp, 1); break;
+				case 2: return unalign_rw(temp, 2); break;
+				case 4: return unalign_rw(temp, 4); break;
+				default: assert(0);
+			}
 		}
 		else {
 			hwaddr_t hwaddr = page_translate(addr);
