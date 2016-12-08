@@ -37,11 +37,13 @@ make_helper(interrupt) {
 	size_t idt_index = instr_fetch(eip + 1, 1);
 	cpu.esp -= 4;
 	swaddr_write(cpu.esp, 4, cpu.EFLAGS, R_SS);
+	Log("eflags=0x%x", cpu.EFLAGS);
 	cpu.esp -= 4;
 	swaddr_write(cpu.esp, 2, cpu.cs.val, R_SS);
 	Log("CS=0x%x", cpu.cs.val);
 	cpu.esp -= 4;
 	swaddr_write(cpu.esp, 4, eip + 2, R_SS);
+	Log("return address = 0x%x", eip+2);
 
 	raise_intr(idt_index);
 
@@ -51,10 +53,12 @@ make_helper(interrupt) {
 
 make_helper(iret) {
 	cpu.eip = swaddr_read(cpu.esp, 4, R_SS);
+	Log("return address = 0x%x", cpu.eip);
 	cpu.cs.val = swaddr_read(cpu.esp + 4, 2, R_SS);
 	cpu.cs.cache.valid = 0;
 	Log("CS=0x%x", cpu.cs.val);
 	cpu.EFLAGS = swaddr_read(cpu.esp + 8, 4, R_SS);
+	Log("eflags=0x%x", cpu.EFLAGS);
 	cpu.esp += 12;
 
 	do_not_add_instr_len_to_eip = true;
