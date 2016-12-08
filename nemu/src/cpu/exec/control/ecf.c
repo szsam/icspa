@@ -39,6 +39,7 @@ make_helper(interrupt) {
 	swaddr_write(cpu.esp, 4, cpu.EFLAGS, R_SS);
 	cpu.esp -= 4;
 	swaddr_write(cpu.esp, 2, cpu.cs.val, R_SS);
+	Log("CS=0x%x", cpu.cs.val);
 	cpu.esp -= 4;
 	swaddr_write(cpu.esp, 4, eip + 2, R_SS);
 
@@ -52,6 +53,7 @@ make_helper(iret) {
 	cpu.eip = swaddr_read(cpu.esp, 4, R_SS);
 	cpu.cs.val = swaddr_read(cpu.esp + 4, 2, R_SS);
 	cpu.cs.cache.valid = 0;
+	Log("CS=0x%x", cpu.cs.val);
 	cpu.EFLAGS = swaddr_read(cpu.esp + 8, 4, R_SS);
 	cpu.esp += 12;
 
