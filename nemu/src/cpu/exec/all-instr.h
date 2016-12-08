@@ -10,6 +10,8 @@
 #include "data-mov/movsx.h"
 #include "data-mov/lgdt-lidt.h"
 #include "data-mov/flags.h"
+#include "data-mov/pusha.h"
+#include "data-mov/popa.h"
 
 #include "arith/dec.h"
 #include "arith/inc.h"
