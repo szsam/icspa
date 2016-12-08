@@ -4,11 +4,11 @@
 make_helper(lgdt) {
 //	uint8_t modrm = instr_fetch(eip + 1, 1);
 //	assert(modrm == 0x15);
-	int len = decode_rm_l(eip + 1);
+	int len = decode_rm_w(eip + 1);
 
 	assert(op_src->type == OP_TYPE_MEM);
 	swaddr_t addr = op_src->addr;
-	cpu.gdtr.limit = swaddr_read(addr, 2, op_src->sreg);
+	cpu.gdtr.limit = op_src->val;
 	cpu.gdtr.base = swaddr_read(addr + 2, 4, op_src->sreg);
 
 	// Log("gdtr.limit=%d, base=0x%x", cpu.gdtr.limit, cpu.gdtr.base);
@@ -18,11 +18,11 @@ make_helper(lgdt) {
 }
 
 make_helper(lidt) {
-	int len = decode_rm_l(eip + 1);
+	int len = decode_rm_w(eip + 1);
 
 	assert(op_src->type == OP_TYPE_MEM);
 	swaddr_t addr = op_src->addr;
-	cpu.idtr.limit = swaddr_read(addr, 2, op_src->sreg);
+	cpu.idtr.limit = op_src->val;
 	cpu.idtr.base = swaddr_read(addr + 2, 4, op_src->sreg);
 
 	print_asm("lidt %s", op_src->str);
