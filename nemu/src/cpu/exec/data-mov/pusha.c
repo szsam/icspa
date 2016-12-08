@@ -8,8 +8,10 @@ make_helper(pusha) {
 	uint32_t temp = cpu.esp;
 	for (int ix = R_EAX; ix <= R_EDI; ++ix) {
 		cpu.esp -= 4;
-		if (ix != R_ESP)
+		if (ix != R_ESP) {
 			swaddr_write(cpu.esp, 4, reg_l(ix), R_SS);
+			Log("%s=0x%x", regsl[ix], reg_l(ix));
+		}
 		else
 			swaddr_write(cpu.esp, 4, temp, R_SS);
 	}
