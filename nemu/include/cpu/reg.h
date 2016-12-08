@@ -71,6 +71,8 @@ typedef struct {
 		SegSel segment_registers[4];
 	};
 
+	bool INTR;
+
 } CPU_state;
 
 extern CPU_state cpu;

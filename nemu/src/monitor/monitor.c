@@ -11,6 +11,9 @@ void init_regex();
 void init_wp_pool();
 void init_ddr3();
 
+void init_device();
+void init_sdl();
+
 #include "memory/cache-l1.h"
 extern Cache_level1 cache_l1;
 #include "memory/cache-template-end.h"
@@ -47,6 +50,10 @@ void init_monitor(int argc, char *argv[]) {
 
 	/* Initialize the watchpoint pool. */
 	init_wp_pool();
+
+	/* Initialize device and SDL. */
+	init_device();
+	init_sdl();
 
 	/* Display welcome message. */
 	welcome();
