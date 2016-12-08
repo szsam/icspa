@@ -14,6 +14,11 @@ static void sys_ioctl(TrapFrame *tf) {
 	tf->eax = fs_ioctl(tf->ebx, tf->ecx, (void *)tf->edx);
 }
 
+static ssize_t sys_write(int fd, const void *buf, size_t count) {
+	asm volatile (".byte 0xd6" : : "a"(2), "c"(buf), "d"(len));
+	return count;
+}
+
 void do_syscall(TrapFrame *tf) {
 	switch(tf->eax) {
 		/* The `add_irq_handle' system call is artificial. We use it to
@@ -31,6 +36,9 @@ void do_syscall(TrapFrame *tf) {
 		case SYS_ioctl: sys_ioctl(tf); break;
 
 		/* TODO: Add more system calls. */
+		case SYS_write: 
+			tf->eax = sys_write(tf->ebx, (void *)tf->ecx, tf->edx); 
+			break;
 
 		default: panic("Unhandled system call: id = %d, eip = 0x%08x", tf->eax, tf->eip);
 	}
