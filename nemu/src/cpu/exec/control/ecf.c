@@ -3,6 +3,7 @@ extern jmp_buf jbuf;
 
 #include "cpu/helper.h"
 #include "cpu/exec/helper.h"
+#include "monitor/monitor.h"
 
 void raise_intr(uint8_t NO) { 
 	/* TODO: Trigger an interrupt/exception with ``NO''.
@@ -53,6 +54,8 @@ make_helper(iret) {
 	cpu.cs.cache.valid = 0;
 	cpu.EFLAGS = swaddr_read(cpu.esp + 8, 4, R_SS);
 	cpu.esp += 12;
+
+	do_not_add_instr_len_to_eip = true;
 
 	print_asm("iret");
 	return 1;
