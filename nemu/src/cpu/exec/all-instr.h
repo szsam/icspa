@@ -9,7 +9,7 @@
 #include "data-mov/movzx.h"
 #include "data-mov/movsx.h"
 #include "data-mov/lgdt-lidt.h"
-#include "data-mov/dir-flag.h"
+#include "data-mov/flags.h"
 
 #include "arith/dec.h"
 #include "arith/inc.h"
