@@ -1,30 +1,30 @@
 #include "cpu/helper.h"
 #include "cpu/exec/helper.h"
 
-/* By KISS rule, we assume ModR/M byte is 0x15,
- * followed by a disp32, and OperandSize = 32 */
 make_helper(lgdt) {
-	uint8_t modrm = instr_fetch(eip + 1, 1);
-	assert(modrm == 0x15);
+//	uint8_t modrm = instr_fetch(eip + 1, 1);
+//	assert(modrm == 0x15);
+	int len = decode_rm_l(eip + 1);
 
-	swaddr_t addr = instr_fetch(eip + 2, 4);
-	cpu.gdtr.limit = swaddr_read(addr, 2, -1);
-	cpu.gdtr.base = swaddr_read(addr + 2, 4, -1);
+	assert(op_src->type == OP_TYPE_MEM);
+	swaddr_t addr = op_src->addr;
+	cpu.gdtr.limit = swaddr_read(addr, 2, op_src->sreg);
+	cpu.gdtr.base = swaddr_read(addr + 2, 4, op_src->sreg);
 
 	// Log("gdtr.limit=%d, base=0x%x", cpu.gdtr.limit, cpu.gdtr.base);
 
-	print_asm("lgdt 0x%x", addr);
-	return 6;
+	print_asm("lgdt %s", op_src->str);
+	return len + 1;
 }
 
 make_helper(lidt) {
-	uint8_t modrm = instr_fetch(eip + 1, 1);
-	assert(modrm == 0x15);
+	int len = decode_rm_l(eip + 1);
 
-	swaddr_t addr = instr_fetch(eip + 2, 4);
-	cpu.idtr.limit = swaddr_read(addr, 2, -1);
-	cpu.idtr.base = swaddr_read(addr + 2, 4, -1);
+	assert(op_src->type == OP_TYPE_MEM);
+	swaddr_t addr = op_src->addr;
+	cpu.idtr.limit = swaddr_read(addr, 2, op_src->sreg);
+	cpu.idtr.base = swaddr_read(addr + 2, 4, op_src->sreg);
 
-	print_asm("lidt 0x%x", addr);
-	return 6;
+	print_asm("lidt %s", op_src->str);
+	return len + 1;
 }
