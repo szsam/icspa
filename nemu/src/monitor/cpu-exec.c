@@ -4,7 +4,7 @@
 #include "device/i8259.h"
 #include <setjmp.h>
 
-void raise_intr(uint8_t);
+void raise_intr(uint8_t, uint32_t, uint16_t, uint32_t);
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -92,7 +92,7 @@ void cpu_exec(volatile uint32_t n) {
 			Log("interrupt");
 			uint32_t intr_no = i8259_query_intr();
 			i8259_ack_intr();
-			raise_intr(intr_no);
+			raise_intr(intr_no, cpu.EFLAGS, cpu.cs.val, cpu.eip);
 		}
 #endif
 

@@ -5,10 +5,21 @@ extern jmp_buf jbuf;
 #include "cpu/exec/helper.h"
 #include "monitor/monitor.h"
 
-void raise_intr(uint8_t NO) { 
+void raise_intr(uint8_t NO, uint32_t eflags, uint16_t cs, uint32_t eip) { 
 	/* TODO: Trigger an interrupt/exception with ``NO''.
 	 * That is, use `NO' to index the IDT.
 	 */
+	
+	// save eflags, cs and eip on stack
+	cpu.esp -= 4;
+	swaddr_write(cpu.esp, 4, eflags, R_SS);
+	Log("eflags=0x%x", eflags);
+	cpu.esp -= 4;
+	swaddr_write(cpu.esp, 2, cs, R_SS);
+	Log("CS=0x%x", cs);
+	cpu.esp -= 4;
+	swaddr_write(cpu.esp, 4, eip, R_SS);
+	Log("return address = 0x%x", eip);
 	
 	// find the gate descriptor
 	lnaddr_t gateDesc_addr = cpu.idtr.base + NO * sizeof(GateDesc);
@@ -35,17 +46,8 @@ void raise_intr(uint8_t NO) {
 
 make_helper(interrupt) {
 	size_t idt_index = instr_fetch(eip + 1, 1);
-	cpu.esp -= 4;
-	swaddr_write(cpu.esp, 4, cpu.EFLAGS, R_SS);
-	Log("eflags=0x%x", cpu.EFLAGS);
-	cpu.esp -= 4;
-	swaddr_write(cpu.esp, 2, cpu.cs.val, R_SS);
-	Log("CS=0x%x", cpu.cs.val);
-	cpu.esp -= 4;
-	swaddr_write(cpu.esp, 4, eip + 2, R_SS);
-	Log("return address = 0x%x", eip+2);
 
-	raise_intr(idt_index);
+	raise_intr(idt_index, cpu.EFLAGS, cpu.cs.val, eip + 2);
 
 	print_asm("int 0x%x", idt_index);
 	return 2;
