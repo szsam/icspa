@@ -56,3 +56,5 @@
 #include "control/jmp.h"
 #include "control/ecf.h"
 
+#include "system/hlt.h"
+
