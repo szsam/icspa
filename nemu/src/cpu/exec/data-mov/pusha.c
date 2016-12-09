@@ -10,7 +10,7 @@ make_helper(pusha) {
 		cpu.esp -= 4;
 		if (ix != R_ESP) {
 			swaddr_write(cpu.esp, 4, reg_l(ix), R_SS);
-			//Log("%s=0x%x", regsl[ix], reg_l(ix));
+			Log("%s=0x%x", regsl[ix], reg_l(ix));
 		}
 		else
 			swaddr_write(cpu.esp, 4, temp, R_SS);
