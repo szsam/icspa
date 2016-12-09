@@ -50,7 +50,7 @@ uint32_t loader() {
 			 */
 			// memcpy((void *)(ph->p_vaddr), buf + ph->p_offset, ph->p_filesz);
 			// `buf' is used to and ONLY to store the ELF-header and program-header!
-			ramdisk_read((uint8_t *)hwaddr, ph->p_offset, ph->p_filesz);
+			ide_read((uint8_t *)hwaddr, ph->p_offset, ph->p_filesz);
 			 
 			/* TODO: zero the memory region 
 			 * [VirtAddr + FileSiz, VirtAddr + MemSiz)
@@ -72,9 +72,9 @@ uint32_t loader() {
 #ifdef IA32_PAGE
 	mm_malloc(KOFFSET - STACK_SIZE, STACK_SIZE);
 
-//#ifdef HAS_DEVICE
+#ifdef HAS_DEVICE
 	create_video_mapping();
-//#endif
+#endif
 
 	write_cr3(get_ucr3());
 #endif
