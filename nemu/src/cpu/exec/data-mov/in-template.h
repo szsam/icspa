@@ -1,4 +1,5 @@
 #include "cpu/exec/template-start.h"
+#include "device/port-io.h"
 
 #define instr in
 

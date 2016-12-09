@@ -1,4 +1,5 @@
 #include "cpu/exec/template-start.h"
+#include "device/port-io.h"
 
 #define instr out
 
@@ -12,7 +13,7 @@ make_helper(concat(out_a2i_, SUFFIX)) {
 
 make_helper(concat(out_a2d_, SUFFIX)) {
 	ioaddr_t addr = reg_w(R_EDX);	// DX
-	pio_read(addr, DATA_BYTE, REG(R_EAX));
+	pio_write(addr, DATA_BYTE, REG(R_EAX));
 
 	// print_asm("mov" str(SUFFIX) " 0x%x,%%%s", addr, REG_NAME(R_EAX));
 	return 1;

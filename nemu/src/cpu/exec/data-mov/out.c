@@ -15,3 +15,4 @@
 /* for instruction encoding overloading */
 
 make_helper_v(out_a2i)
+make_helper_v(out_a2d)
