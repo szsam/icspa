@@ -113,7 +113,14 @@ void lnaddr_write(lnaddr_t addr, size_t len, uint32_t data) {
 	if (cpu.cr0.paging) {
 		if ((addr & 0xfffff000) != ((addr+len-1) & 0xfffff000)) {
 			// data cross page boundary
-			assert(0);
+			lnaddr_t next_page_addr = (addr | 0xfff) + 1;
+			size_t len1 = next_page_addr - addr;
+			size_t len2 = len - len1;
+			hwaddr_t hwaddr1 = page_translate(addr);
+			hwaddr_t hwaddr2 = page_translate(next_page_addr);
+			uint32_t data2 = data >> (8 * len1);
+			hwaddr_write(hwaddr1, len1, data);
+			hwaddr_write(hwaddr2, len2, data2);
 		}
 		else {
 			hwaddr_t hwaddr = page_translate(addr);
