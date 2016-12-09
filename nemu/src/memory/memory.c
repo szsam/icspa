@@ -4,6 +4,7 @@
 #include "memory/cache-template-end.h"
 #include "memory/tlb.h"
 #include "cpu/reg.h"
+#include "device/mmio.h"
 
 #define PTE_SIZE 4
 
@@ -17,12 +18,20 @@ extern Cache_level1 cache_l1;
 
 uint32_t hwaddr_read(hwaddr_t addr, size_t len) {
 	 // return dram_read(addr, len) & (~0u >> ((4 - len) << 3));
-	 return cache_l1.read(&cache_l1, addr, len);
+	 int map_no;
+	 if ((map_no = is_mmio(addr)) != -1)
+		 return mmio_read(addr, len, map_no);
+	 else
+		 return cache_l1.read(&cache_l1, addr, len);
 }
 
 void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
 	// dram_write(addr, len, data);
-	cache_l1.write(&cache_l1, addr, len, data);
+	int map_no;
+	if ((map_no = is_mmio(addr)) != -1)
+		mmio_write(addr, len, data, map_no);
+	else
+		cache_l1.write(&cache_l1, addr, len, data);
 }
 
 hwaddr_t page_translate(lnaddr_t addr) {
