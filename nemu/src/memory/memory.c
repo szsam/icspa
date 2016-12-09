@@ -7,31 +7,42 @@
 #include "device/mmio.h"
 
 #define PTE_SIZE 4
+// #define CACHE
 
+#ifdef CACHE
 extern Cache_level1 cache_l1;
-
-//uint32_t dram_read(hwaddr_t, size_t);
-//void dram_write(hwaddr_t, size_t, uint32_t);
+#else
+uint32_t dram_read(hwaddr_t, size_t);
+void dram_write(hwaddr_t, size_t, uint32_t);
+#endif
 
 
 /* Memory accessing interfaces */
 
 uint32_t hwaddr_read(hwaddr_t addr, size_t len) {
-	 // return dram_read(addr, len) & (~0u >> ((4 - len) << 3));
 	 int map_no;
 	 if ((map_no = is_mmio(addr)) != -1)
 		 return mmio_read(addr, len, map_no);
-	 else
+	 else {
+#ifdef CACHE
 		 return cache_l1.read(&cache_l1, addr, len);
+#else
+		 return dram_read(addr, len) & (~0u >> ((4 - len) << 3));
+#endif 
+	 }
 }
 
 void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
-	// dram_write(addr, len, data);
 	int map_no;
 	if ((map_no = is_mmio(addr)) != -1)
 		mmio_write(addr, len, data, map_no);
-	else
+	else {
+#ifdef CACHE
 		cache_l1.write(&cache_l1, addr, len, data);
+#else
+		dram_write(addr, len, data);
+#endif
+	}
 }
 
 hwaddr_t page_translate(lnaddr_t addr) {
