@@ -1,7 +1,10 @@
 #include "monitor/monitor.h"
 #include "monitor/watchpoint.h"
 #include "cpu/helper.h"
+#include "device/i8259.h"
 #include <setjmp.h>
+
+void raise_intr(uint8_t);
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -84,6 +87,12 @@ void cpu_exec(volatile uint32_t n) {
 #ifdef HAS_DEVICE
 		extern void device_update();
 		device_update();
+
+		if(cpu.INTR & cpu.IF) {
+			uint32_t intr_no = i8259_query_intr();
+			i8259_ack_intr();
+			raise_intr(intr_no);
+		}
 #endif
 
 		if(nemu_state != RUNNING) { return; }
