@@ -91,7 +91,7 @@ void cpu_exec(volatile uint32_t n) {
 		if(cpu.INTR & cpu.IF) {
 			uint32_t intr_no = i8259_query_intr();
 			i8259_ack_intr();
-			Log("interrupt no:0x%x", intr_no);
+			// Log("interrupt no:0x%x", intr_no);
 			raise_intr(intr_no, cpu.EFLAGS, cpu.cs.val, cpu.eip);
 		}
 #endif
