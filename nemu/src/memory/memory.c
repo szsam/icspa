@@ -7,7 +7,7 @@
 #include "device/mmio.h"
 
 #define PTE_SIZE 4
-// #define CACHE
+#define CACHE
 
 #ifdef CACHE
 extern Cache_level1 cache_l1;

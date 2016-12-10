@@ -114,7 +114,18 @@ static void cache_write_internal(struct Cache_level1 * const this,
 static void cache_l1_write(Cache_level1 * const this, hwaddr_t addr, size_t len, uint32_t data)
 {
 	// write through, not write allocate
-	cache_write_internal(this, addr, len, data);
+	MEM_ADDR madd;
+	madd.addr = addr;
+
+	if (madd.block_offset + len <= BLOCK_SIZE)
+		cache_write_internal(this, addr, len, data);
+	else {	// data cross block boundary
+		size_t len1 = BLOCK_SIZE - madd.block_offset;
+		size_t len2 = len - len1;
+		uint32_t data2 = data >> (8 * len1);
+		cache_write_internal(this, addr, len1, data);
+		cache_write_internal(this, addr + len1, len2, data2);
+	}
 }
 
 static void init_cache(struct Cache_level1 * const this) {
