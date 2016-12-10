@@ -1,4 +1,5 @@
 #include "cpu/helper.h"
+#include "cpu/exec/helper.h"
 #include "device/i8259.h"
 
 void device_update();
@@ -9,10 +10,6 @@ make_helper(hlt) {
 		device_update();
 	}
 
-	uint32_t intr_no = i8259_query_intr();
-	i8259_ack_intr();
-	raise_intr(intr_no, cpu.EFLAGS, cpu.cs.val, cpu.eip);
-
-	panic("control should never reaches here");
+	print_asm("hlt");
 	return 1;
 }
