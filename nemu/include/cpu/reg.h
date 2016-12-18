@@ -71,7 +71,7 @@ typedef struct {
 		SegSel segment_registers[4];
 	};
 
-	bool INTR;
+	volatile bool INTR;
 
 } CPU_state;
 

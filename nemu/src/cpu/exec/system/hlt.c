@@ -4,9 +4,7 @@
 void device_update();
 
 make_helper(hlt) {
-	while (!(cpu.INTR & cpu.IF)) {
-		device_update();
-	}
+	while (!(cpu.INTR & cpu.IF));
 
 	print_asm("hlt");
 	return 1;
