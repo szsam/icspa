@@ -29,7 +29,14 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect,
 	 * `dst' surface.
 	 */
 
-	assert(0);
+	uint8_t *dst_ptr = dst->pixels + dy * dst->w + dx;
+	uint8_t *src_ptr = src->pixels + sy * src->w + sx;
+	int hi;
+	for (hi = 0; hi < h; ++hi) {
+		memcpy(dst_ptr, src_ptr, w);
+		dst_ptr += w;
+		src_ptr += w;
+	}
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
@@ -41,7 +48,17 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 	 * NULL, fill the whole surface.
 	 */
 
-	assert(0);
+	int dx = (dstrect == NULL ? 0 : dstrect->x);
+	int dy = (dstrect == NULL ? 0 : dstrect->y);
+	int w = (dstrect == NULL ? dst->w : dstrect->w);
+	int h = (dstrect == NULL ? dst->h : dstrect->h);
+
+	uint8_t *dst_ptr = dst->pixels + dy * dst->w + dx;
+	int hi;
+	for (hi = 0; hi < h; ++hi) {
+		memset(dst_ptr, color, w);
+		dst_ptr += w;
+	}
 }
 
 void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors, 
@@ -70,7 +87,7 @@ void SDL_SetPalette(SDL_Surface *s, int flags, SDL_Color *colors,
 
 	if(s->flags & SDL_HWSURFACE) {
 		/* TODO: Set the VGA palette by calling write_palette(). */
-		assert(0);
+		write_palette(colors, ncolors);
 	}
 }
 
