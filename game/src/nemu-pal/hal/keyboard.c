@@ -14,12 +14,37 @@ static const int keycode_array[] = {
 
 static int key_state[NR_KEYS];
 
+// set when the last scancode received is 0xf0, clear otherwise
+static bool last_data_is_0xf0 = false;
+
 void
 keyboard_event(void) {
 	/* TODO: Fetch the scancode and update the key states. */
-	assert(0);
+	// assert(0);
+	uint8_t key_code = in_byte(0x60);
+	int i = 0;
+	while (i < NR_KEYS && keycode_array[i] != key_code) {
+		i++;
+	}
+
+	if (!last_data_is_0xf0) {
+		if (i < NR_KEYS)
+			key_state[i] = KEY_STATE_PRESS;
+		else {
+			assert(key_code == 0xf0);
+			last_data_is_0xf0 = true;
+		}
+	}
+	else {
+		assert(i < NR_KEYS);
+		assert(key_state[i] == KEY_STATE_PRESS || key_state[i] == KEY_STATE_WAIT_RELEASE);
+		key_state[i] = KEY_STATE_RELEASE;
+		last_data_is_0xf0 = false;
+	}
+			
 }
 
+/*
 static inline int
 get_keycode(int index) {
 	assert(index >= 0 && index < NR_KEYS);
@@ -43,6 +68,7 @@ clear_key(int index) {
 	assert(index >= 0 && index < NR_KEYS);
 	key_state[index] = KEY_STATE_EMPTY;
 }
+*/
 
 bool 
 process_keys(void (*key_press_callback)(int), void (*key_release_callback)(int)) {
@@ -55,7 +81,21 @@ process_keys(void (*key_press_callback)(int), void (*key_release_callback)(int))
 	 * Remember to enable interrupts before returning from the function.
 	 */
 
-	assert(0);
+	for (int i = 0; i < NR_KEYS; i++) {
+		int state = key_state[i];
+		if (state == KEY_STATE_PRESS || state == KEY_STATE_RELEASE ) {
+			if (state == KEY_STATE_PRESS) {
+				key_press_callback(keycode_array[i]);
+				key_state[i] = KEY_STATE_WAIT_RELEASE;
+			}
+			else {
+				key_release_callback(keycode_array[i]);
+				key_state[i] = KEY_STATE_EMPTY;
+			}
+			sti();
+			return true;
+		}
+	}
 	sti();
 	return false;
 }
