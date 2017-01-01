@@ -34,8 +34,8 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect,
 	int hi;
 	for (hi = 0; hi < h; ++hi) {
 		memcpy(dst_ptr, src_ptr, w);
-		dst_ptr += w;
-		src_ptr += w;
+		dst_ptr += dst->w;
+		src_ptr += src->w;
 	}
 }
 
@@ -57,7 +57,7 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 	int hi;
 	for (hi = 0; hi < h; ++hi) {
 		memset(dst_ptr, color, w);
-		dst_ptr += w;
+		dst_ptr += dst->w;
 	}
 }
 
