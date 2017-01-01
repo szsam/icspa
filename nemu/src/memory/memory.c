@@ -34,8 +34,14 @@ uint32_t hwaddr_read(hwaddr_t addr, size_t len) {
 
 void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
 	int map_no;
-	if ((map_no = is_mmio(addr)) != -1)
-		mmio_write(addr, len, data, map_no);
+	if ((map_no = is_mmio(addr)) != -1) {
+		if (len == 3) {
+			mmio_write(addr, 2, data, map_no);
+			mmio_write(addr + 2, 1, (data >> 16), map_no);
+		}
+		else 
+			mmio_write(addr, len, data, map_no);
+	}
 	else {
 #ifdef CACHE
 		cache_l1.write(&cache_l1, addr, len, data);
