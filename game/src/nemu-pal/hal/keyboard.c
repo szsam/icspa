@@ -14,9 +14,6 @@ static const int keycode_array[] = {
 
 static int key_state[NR_KEYS];
 
-// set when the last scancode received is 0xf0, clear otherwise
-static bool last_data_is_0xf0 = false;
-
 void
 keyboard_event(void) {
 	/* TODO: Fetch the scancode and update the key states. */
@@ -29,21 +26,19 @@ keyboard_event(void) {
 		i++;
 	}
 
-	if (!last_data_is_0xf0) {
-		if (i < NR_KEYS)
-			key_state[i] = KEY_STATE_PRESS;
-		else {
-			assert(key_code == 0xf0);
-			last_data_is_0xf0 = true;
-		}
-	}
+	if (i < NR_KEYS)
+		key_state[i] = KEY_STATE_PRESS;
 	else {
+		key_code &= 0x7f;	// clear MSB
+		i = 0;
+		while (i < NR_KEYS && keycode_array[i] != key_code) {
+			i++;
+		}
 		assert(i < NR_KEYS);
 		assert(key_state[i] == KEY_STATE_PRESS || key_state[i] == KEY_STATE_WAIT_RELEASE);
 		key_state[i] = KEY_STATE_RELEASE;
-		last_data_is_0xf0 = false;
+
 	}
-			
 }
 
 /*
