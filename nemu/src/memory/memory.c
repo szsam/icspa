@@ -36,8 +36,8 @@ void hwaddr_write(hwaddr_t addr, size_t len, uint32_t data) {
 	int map_no;
 	if ((map_no = is_mmio(addr)) != -1) {
 		if (len == 3) {
-			mmio_write(addr, 2, data, map_no);
-			mmio_write(addr + 2, 1, (data >> 16), map_no);
+			mmio_write(addr, 2, data & 0xffff, map_no);
+			mmio_write(addr + 2, 1, (data >> 16) & 0xff, map_no);
 		}
 		else 
 			mmio_write(addr, len, data, map_no);
