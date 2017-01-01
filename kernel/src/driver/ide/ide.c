@@ -21,7 +21,7 @@ void ide_read(uint8_t *buf, uint32_t offset, uint32_t len) {
 	}
 }
 
-void ide_write(uint8_t *buf, uint32_t offset, uint32_t len) {
+void ide_write(const uint8_t *buf, uint32_t offset, uint32_t len) {
 	uint32_t i;
 	for (i = 0; i < len; i ++) {
 		write_byte(offset + i, buf[i]);
