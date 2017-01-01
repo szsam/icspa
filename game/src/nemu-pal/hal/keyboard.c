@@ -19,7 +19,7 @@ keyboard_event(void) {
 	/* TODO: Fetch the scancode and update the key states. */
 	// assert(0);
 	uint8_t key_code = in_byte(0x60);
-	Log("scancode: 0x%x", key_code);
+	// Log("scancode: 0x%x", key_code);
 
 	int i = 0;
 	while (i < NR_KEYS && keycode_array[i] != key_code) {
@@ -34,9 +34,11 @@ keyboard_event(void) {
 		while (i < NR_KEYS && keycode_array[i] != key_code) {
 			i++;
 		}
-		assert(i < NR_KEYS);
-		assert(key_state[i] == KEY_STATE_PRESS || key_state[i] == KEY_STATE_WAIT_RELEASE);
-		key_state[i] = KEY_STATE_RELEASE;
+		if (i < NR_KEYS) {
+			assert(key_state[i] == KEY_STATE_PRESS || key_state[i] == KEY_STATE_WAIT_RELEASE);
+			key_state[i] = KEY_STATE_RELEASE;
+		}
+		// if the key_code is NOT in keycode_array[], just ignore it
 
 	}
 }
