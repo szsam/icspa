@@ -6,6 +6,7 @@
 #include "data-mov/pop.h"
 #include "data-mov/leave.h"
 #include "data-mov/cwd_cdq.h"
+#include "data-mov/cbw_cwde.h"
 #include "data-mov/movzx.h"
 #include "data-mov/movsx.h"
 #include "data-mov/lgdt-lidt.h"
