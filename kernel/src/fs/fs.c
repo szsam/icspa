@@ -1,11 +1,17 @@
 #include "common.h"
 #include <sys/ioctl.h>
+#include <string.h>
 
 typedef struct {
 	char *name;
 	uint32_t size;
 	uint32_t disk_offset;
 } file_info;
+
+typedef struct {
+	bool opened;
+	uint32_t offset;
+} Fstate;
 
 enum {SEEK_SET, SEEK_CUR, SEEK_END};
 
@@ -38,3 +44,94 @@ void ide_write(uint8_t *, uint32_t, uint32_t);
 
 /* TODO: implement a simplified file system here. */
 
+Fstate fstates[NR_FILES + 3] =
+{
+	{ true, 0},		// stdin
+	{ true, 0},		// stdout
+	{ true, 0}		// stderr	
+};
+
+/* Given a pathname for a file, open() returns a file descriptor, a small,
+ * nonnegative integer for use in subsequent system  calls */
+int fs_open(const char *pathname, int flags)    /* 在我们的实现中可以忽略flags */
+{
+	int i;
+	for (i = 0; i < NR_FILES; i++) {
+		if (!strcmp(file_table[i].name, pathname)) {
+			fstates[i + 3].opened = true;
+			fstates[i + 3].offset = 0;
+			return i + 3;
+		}
+	}
+	assert(0);
+	return -1;
+}
+
+/* read()  attempts to read up to count bytes from file descriptor fd into
+ * the buffer starting at buf. */
+int fs_read(int fd, void *buf, int len) {
+	// ignore stdin, stdout, stderr
+	assert(fd >= 3);
+
+	assert(fstates[fd].opened);
+	if (fstates[fd].offset + len <= file_table[fd -3].size) {
+		ide_read(buf, 
+				file_table[fd -3].disk_offset + fstates[fd].offset, 
+				len);
+		fstates[fd].offset += len;
+		return len;
+	}
+	else {
+		int len1 = file_table[fd -3].size - fstates[fd].offset;
+		ide_read(buf, 
+				file_table[fd -3].disk_offset + fstates[fd].offset, 
+				len1); 
+		fstates[fd].offset = file_table[fd -3].size;
+		return len1;
+	}
+}
+
+int fs_write(int fd, const void *buf, int len) {
+	assert(fd >= 3);
+
+	assert(fstates[fd].opened);
+	if (fstates[fd].offset + len <= file_table[fd -3].size) {
+		ide_write(buf, 
+				file_table[fd -3].disk_offset + fstates[fd].offset, 
+				len);
+		fstates[fd].offset += len;
+		return len;
+	}
+	else {
+		int len1 = file_table[fd -3].size - fstates[fd].offset;
+		ide_write(buf, 
+				file_table[fd -3].disk_offset + fstates[fd].offset, 
+				len1); 
+		fstates[fd].offset = file_table[fd -3].size;
+		return len1;
+	}
+}
+
+int fs_lseek(int fd, int offset, int whence) {
+	assert(fstates[fd].opened);
+
+	uint32_t new_offset = 0;
+	switch (whence) {
+		case SEEK_SET: 
+			new_offset = offset; break;
+		case SEEK_CUR: 
+			new_offset = fstates[fd].offset + offset; break;
+		case SEEK_END: 
+			new_offset = file_table[fd - 3].size + offset; 
+			break;
+		default:
+			assert(0);
+	}
+	fstates[fd].offset = new_offset;
+	return new_offset;
+}
+
+int fs_close(int fd) {
+	fstates[fd].opened = false;
+	return 0;
+}
