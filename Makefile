@@ -4,7 +4,7 @@
 
 CC := gcc
 LD := ld
-CFLAGS := -MMD -Wall -Werror -c
+CFLAGS := -MMD -Wall -Werror -std=gnu11 -c
 #CFLAGS := -MMD -Wall -c
 
 LIB_COMMON_DIR := lib-common
